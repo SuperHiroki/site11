@@ -1,0 +1,203 @@
+{% extends 'app/base.html' %}
+{% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/sonota.css' %}">
+
+<ol id="ol">
+<!--1-------------------------------------------------------------------------------------->
+  <div id='mokujione'><!--ここに飛べるように、idを作った。-->
+    <li><span class="yellow_background">{{mokujione}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+        <p>
+          ある番組の視聴率は
+          <span><input id="sichouritu" type="number" min="0" max="1" step="0.01" value="0.2" placeholder="0から1の数値" required style="color:green"></span>
+          (<span style="color:green">$p$</span>) である(これは母集団の視聴率である)。
+          <span><input id="ninzuu" type="number" min="0" max="100000000" step="1" value="200" placeholder="人数" required style="color:blue"></span>
+          (<span style="color:blue">$n$</span>)人を適当に選んで、その番組を視聴しているのかどうかの調査をした時、その集団の視聴率(<span style="color: purple">$\bar{X}$</span>)が
+          <span><input id="sichourituchiisai" type="number" min="0" max="1" step="0.01" value="0.15" placeholder="0から1の数値" required style="color:red"></span>
+          (<span style="color:red">$Y$</span>)以下になる確率を求めろ。
+        </p>
+        <p><input type="button" value="解答" onclick="keisan1()"></p>    　
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3><span class="redunderline">$1-\Phi($<span id="kaitou1_nikoubunpu">???</span>$)$</span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <p>この後、正規分布表を用いる</p>
+      <h4><span class="green_background">解説</span></h4>
+      <p>これは本来求めるのは難しいが、中心極限定理による近似で求めることができる。これを二項分布の正規近似という。ただし、$n$が大きい時に限る。</p>
+      <div>
+        \[
+        \begin{align}
+        P(\color{purple}{\bar{X}}\leq\color{red}{Y})=&P(Z_{\color{blue}{n}}\leq\frac{\sqrt{\color{blue}{n}}(\color{red}{Y}-\color{green}{p})}{\sqrt{\color{green}{p}(1-\color{green}{p})}})\\
+                                                    =&\Phi(\frac{\sqrt{\color{blue}{n}}(\color{red}{Y}-\color{green}{p})}{\sqrt{\color{green}{p}(1-\color{green}{p})}})\\
+                                                    =&1-\Phi(-\frac{\sqrt{\color{blue}{n}}(\color{red}{Y}-\color{green}{p})}{\sqrt{\color{green}{p}(1-\color{green}{p})}})\\
+        \end{align}
+        \]
+        <p>$P(\color{purple}{\bar{X}}\leq\color{red}{Y})=$<span id="kaitou2_nikoubunpu" class="redunderline">ここに答え</span></p>
+      </div>     
+    </div>
+  </div>
+<script>
+//一問目の計算。-------------------------------------------
+function keisan1(){
+  var sichouritu=document.getElementById('sichouritu').value;
+  var ninzuu=document.getElementById('ninzuu').value;
+  var sichourituchiisai=document.getElementById('sichourituchiisai').value;
+  var fainonaka=-(ninzuu*(sichourituchiisai-sichouritu))/Math.sqrt(ninzuu*sichouritu*(1-sichouritu));
+  fainonaka_floor=Math.round(fainonaka*1000)/1000
+  document.getElementById('kaitou1_nikoubunpu').innerHTML=fainonaka_floor;
+  $("#kaitou2_nikoubunpu").html("$");
+  $("#kaitou2_nikoubunpu").append("1-\\Phi("+fainonaka+")");
+  $("#kaitou2_nikoubunpu").append("$");
+  MathJax.Hub.Queue(["Typeset",MathJax.Hub,"kaitou2_nikoubunpu"]);
+};
+//focusoutした時に、minとmaxが反映されるように。全体。------------
+$('input[type="number"]').focusout(function() {
+      if(typeof $(this).attr('min') !== "undefined" && parseInt($(this).val()) < parseInt($(this).attr('min')))
+          $(this).val($(this).attr('min'));
+      else if(typeof $(this).attr('max') !== "undefined" && parseInt($(this).val()) > parseInt($(this).attr('max')))
+          $(this).val($(this).attr('max'));
+      else if(typeof $(this).attr('min') !== "undefined" && $(this).val() === '')
+          $(this).val($(this).attr('min'));
+});
+//focusoutした時に、step=1が反映される(小数点以下切り捨てする)ように。ここだけ。----
+$('#ninzuu').focusout(function() {
+  if(typeof $(this).attr('step') !== "undefined" && parseInt($(this).attr('step'))==1  )
+    $(this).val(Math.round(parseInt($(this).val())));
+});
+</script>
+<!--2-------------------------------------------------------------------------------------------->
+  <div id="mokujitwo">
+    <li><span class="yellow_background">{{mokujitwo}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+        <p>
+          ある人が一日に歩く距離は、正規分布$\mathcal{N}($
+          <span><input id="hiroki" type="number" min="-100000000" max="100000000" step="10" value="100" placeholder="何でもあり" required style="color:green"></span>
+          (<span style="color:green">$\mu$</span>),
+          $\color{orange}{}$<span><input id="jin" type="number" min="-100000" max="100000" step="1" value="10" placeholder="何でもあり" required style="color:orange"></span>$\color{orange}{^2}$
+          (<span style="color:orange">$\sigma^2$</span>)$)$に従うとする。ただし単位はkm。
+          <span><input id="nao" type="number" min="0" max="100000" step="1" value="4" placeholder="0以上の数値" required style="color:blue"></span>
+          (<span style="color:blue">$n$</span>)日間で歩く距離(<span style="color:purple">$W_n$</span>)が
+          <span><input id="yayoi" type="number" min="-100000000" max="100000000" step="10" value="420" placeholder="何でもあり" required style="color:red"></span>
+          (<span style="color:red">$Y$</span>)を超える確率を求めろ
+        </p>
+        <p><input type="button" value="解答" onclick="keisan2()"></p>    　
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3><span class="redunderline">$1-\Phi$(<span id="yuuichi">???</span>$)$</span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <p>この後、正規分布表を用いる</p>
+      <h4><span class="green_background">解説</span></h4>
+      <p>$n$日間で歩く距離は、
+      $
+      \begin{align}
+      W_n&\sim\mathcal{N}(\color{green}{\mu}{\color{blue}n},(\color{orange}\sigma\sqrt{\color{blue}n})^2)\\
+         &\sim\mathcal{N}(\mu',\sigma'^2)\\
+      \end{align}
+      $
+      に従う。</p>
+      <p>これはこの範囲の問題ではないが復習のためにのっけた。</p>
+      <div>
+        \[
+        \begin{align}
+        P(\color{purple}{W_{n}}\geq\color{red}{Y})=&P(Z\geq\frac{\color{red}{Y}-\mu'}{\sigma'})\\
+                                                  =&P(Z\geq\frac{\color{red}{Y}-\color{green}\mu\color{blue}n}{\color{orange}\sigma\sqrt{\color{blue}n}})\\
+                                                  =&1-\Phi(\frac{\color{red}{Y}-\color{green}\mu\color{blue}n}{\color{orange}\sigma\sqrt{\color{blue}n}})
+        \end{align}
+        \]
+        <p>$P(\color{purple}{W_{n}}\geq\color{red}{Y})=$<span id="yuuichi2" class="redunderline">ここに答え</span></p>
+      </div>     
+    </div>
+  </div>
+<script>
+//二問目の計算。-----------------------------------------
+function keisan2(){
+  var hiroki=$('#hiroki').val();
+  var jin=$('#jin').val();
+  var nao=$('#nao').val();
+  var yayoi=$('#yayoi').val();
+  var fainonaka=(yayoi-(hiroki*nao))/(jin*Math.sqrt(nao));
+  fainonaka_floor=Math.round(fainonaka*1000)/1000;
+  $('#yuuichi').text(fainonaka_floor);//textはhtmlでもOK。idはvalueを持っていないから、val()はダメ。
+  $('#yuuichi2').html('$1-\\Phi('+fainonaka+')$');
+  MathJax.Hub.Queue(["Typeset",MathJax.Hub,"yuuichi2"]);
+};
+</script>
+<!--3----------------------------------------------------------------------------------->
+  <div id="mokujithree">
+    <li><span class="yellow_background">{{mokujithree}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+        <p>
+          ある人が一日に歩く距離は、正規分布$\mathcal{N}($
+          <span><input id="ringo" type="number" min="-100000000" max="100000000" step="10" value="100" placeholder="何でもあり" required style="color:green"></span>
+          (<span style="color:green">$\mu$</span>),
+          $\color{orange}{}$<span><input id="banana" type="number" min="-100000" max="100000" step="1" value="10" placeholder="何でもあり" required style="color:orange"></span>$\color{orange}{^2}$
+          (<span style="color:orange">$\sigma^2$</span>)$)$に従うとする。ただし単位はkm。
+          <span><input id="lemon" type="number" min="0" max="100000" step="1" value="4" placeholder="0以上の数値" required style="color:blue"></span>
+          (<span style="color:blue">$n$</span>)日間のデータ(無作為標本)をもとにその人が一日に歩く平均距離、すなわち標本平均(<span style="color:purple">$\bar{X}$</span>)を求めた時、
+          <span><input id="ichigo" type="number" min="-100000000" max="100000000" step="10" value="90" placeholder="何でもあり" required style="color:red"></span>
+          (<span style="color:red">$Y$</span>)以下になる確率を求めろ。
+        </p>
+        <p><input type="button" value="解答" onclick="keisan3()"></p>    　
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3><span class="redunderline">$1-\Phi$(<span id="painapple">???</span>$)$</span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <p>この後、正規分布表を用いる</p>
+      <h4><span class="green_background">解説</span></h4>
+      <p>標本平均$\bar{X}$は、
+      $
+      \begin{align}
+      W_n&\sim\mathcal{N}(\color{green}{\mu},(\frac{\color{orange}\sigma}{\sqrt{\color{blue}n}})^2)\\
+         &\sim\mathcal{N}(\mu',\sigma'^2)\\
+      \end{align}
+      $
+      に従う。</p>
+      <p>見れば分かるが、$n$が大きければ大きいほど分散は小さくなる。</p>
+      <div>
+        \[
+        \begin{align}
+        P(\color{purple}{\bar{X}}\leq\color{red}{Y})=&P(Z\leq\frac{\color{red}{Y}-\mu'}{\sigma'})\\
+                                                  =&P(Z\leq\frac{\color{red}{Y}-\color{green}\mu}{\frac{\color{orange}\sigma}{\sqrt{\color{blue}n}}})\\
+                                                  =&\Phi(\frac{\color{red}{Y}-\color{green}\mu}{\frac{\color{orange}\sigma}{\sqrt{\color{blue}n}}})\\
+                                                  =&1-\Phi(-\frac{\color{red}{Y}-\color{green}\mu}{\frac{\color{orange}\sigma}{\sqrt{\color{blue}n}}})
+        \end{align}
+        \]
+        <p>$P(\color{purple}{\bar{X}}\leq\color{red}{Y})=$<span id="painapple2" class="redunderline">ここに答え</span></p>
+      </div>     
+    </div>
+  </div>
+<script>
+var keisan3=function(){
+    var ringo=$('#ringo').val();
+    var banana=$('#banana').val();
+    var lemon=$('#lemon').val();
+    var ichigo=$('#ichigo').val();
+    var fainonaka=-(ichigo-ringo)/(banana)*Math.sqrt(lemon);
+    fainonaka_floor=Math.round(fainonaka*1000)/1000;
+    $('#painapple').text(fainonaka_floor);//textはhtmlでもOK。idはvalueを持っていないから、val()はダメ。
+    $('#painapple2').html('$1-\\Phi('+fainonaka+')$');
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub,"painapple2"]);
+}
+</script>
+<!--4--------------------------------------------------------------------------------------------->
+<!--    
+    <li>{{mokujifour}}</li>
+    <li>{{mokujifive}}</li>
+    <li>{{mokujisix}}</li>
+    <li>{{mokujiseven}}</li>
+    <li>{{mokujieight}}</li>
+    <li>{{mokujinine}}</li>
+    <li>{{mokujiten}}</li>
+    <li>{{mokujieleven}}</li>
+    <li>{{mokujitwelve}}</li>
+-->
+  </ol>
+{% endblock %}

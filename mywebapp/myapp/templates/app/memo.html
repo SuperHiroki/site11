@@ -1,0 +1,77 @@
+function toggle2(){
+    document.querySelector(".menu2").classList.toggle("open");
+  };
+
+  function toggle1(){
+    document.querySelector(".menu1").classList.toggle("open");
+  };
+<!--------------------------------------------------------------------->
+  #menubox.open dt:first-child{
+    transition-delay: 1s;
+}
+#menubox.open dt:nth-child(2){
+    transition-delay: 1.5s;
+}
+#menubox.open dt:nth-child(3){
+    transition-delay: 1.5s;
+}
+#menubox.open dt:nth-child(4){
+    transition-delay: 1.5s;
+}
+#menubox.open dt:last-child{
+    transition-delay: 1.5s;
+}
+<!--------------------------------------------------------------------->
+#menubox.open dt:first-of-type{
+    transition-delay: 1s;
+}
+#menubox.open dt:nth-of-type(2){
+    transition-delay: 2s;
+}
+#menubox.open dt:nth-of-type(2){
+    transition-delay: 3s;
+}
+#menubox.open dt:nth-of-type(2){
+    transition-delay: 4s;
+}
+#menubox.open dt:last-of-type{
+    transition-delay: 5s;
+}
+<!--------------------------------------------------------------------->
+setTimeout(function(){
+    $('#hamon').removeClass('hamontukuru');
+  },750);
+<!--------------------------------------------------------------------------->
+$('#hamon').children().on('animationend', function(){　　　　　/*これだとanimation-delayを使った時。早く消えてしまう。*/
+    $('#hamon').children().removeClass('hamontukuru');
+  });
+<!--------------------------------------------------------------------------->
+setTimeout(function(){
+    $('#hamon').children().removeClass('hamontukuru');
+  }, 4900);
+<!--------------------------------------------------------------------------->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.0.4/math.min.js"></script>
+  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <meta http-equiv="X-UA-Compatible" CONTENT="IE=EmulateIE7" />
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      },
+      "HTML-CSS": { matchFontHeight: false },
+      displayAlign: "left",
+      displayIndent: "0em"
+    });
+  </script>
+<!--------------------------------------------------------------------------->
+<!--------------------------------------------------------------------------->
+<!--------------------------------------------------------------------------->
+git
+userneme hiroki
+email aratanaruhirokihiiroki@gmail.com 
+
+heroku
+userneme hiroki
+email aratanaruhirokihiiroki@gmail.com 
+Hiro6129

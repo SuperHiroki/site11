@@ -1,0 +1,312 @@
+{% extends 'app/base.html' %}
+{% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/sonota.css' %}">
+
+<ol id="ol">
+  <!--1-------------------------------------------------------------------------------------->
+  <div id='mokujione'><!--ここに飛べるように、idを作った。-->
+    <li><span class="yellow_background">{{mokujione}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+        <p>
+          所得に関するデータを下の度数分布表にまとめた。</br>
+          下の度数分布の平均を求めよ。
+        </p>
+        <p><input type="button" value="行追加" onclick="gyoutuika()"></p> 
+        <p><input type="button" value="行削除" onclick="gyousakujo()"></p> 
+        <p>階級値がその階級の平均値である時→<span><input type="button" value="所得=階級値×度数" onclick="syotokukeisan()"></span></p>
+        <p>相対度数, 累積相対度数, 相対所得, 累積相対所得を求める。→<span><input type="button" value="分数" onclick="keisan_hyou_bunsuu()"></span><span><input type="button" value="小数" onclick="keisan_hyou_decimal()"></span></p>
+        <div id="hyou">
+          <table id="hiroki">
+            <tr><th>階級</th><th>階級値</th><th>度数</th><th>相対度数</th><th>累積相対度数</th><th>所得</th><th>相対所得</th><th>累積相対所得</th></tr>
+            <tr><td><input type="text" value="C1" placeholder="" class="kaikyuu"></td><td><input type="number" value="10" placeholder="" class="kaikyuuchi"></td><td><input type="number" value=5 placeholder="" class="dosuu"></td><td><input type="text" value="" placeholder="" disabled class="soutaidosuu"></td><td><input type="text" value="" placeholder="" disabled class="ruisekisoutaidosuu"></td><td><input type="number" value="50" placeholder="" class="syotoku"></td><td><input type="text" value="" placeholder="" disabled class="soutaisyotoku"></td><td><input type="text" value="" placeholder="" disabled class="ruisekisoutaisyotoku"></td></tr>
+          </table>
+        </div>
+        <p><input type="button" value="解答" onclick="keisan_heikin()"><span></span></p>
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3><span class="redunderline">度数分布の平均：<span id="dosuubunpu_heikin">???</span></span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <h4><span class="green_background">解説</span></h4>
+      <p>これは、相対度数を重みとした時の、$x_1^*,\cdots,x_k^*$の加重平均である。階級値が階級平均値の場合には、この加重平均が全データのの平均値に等しくなる。</p>
+      <div>
+        \[
+        \begin{align}
+        (平均)~=\bar{x}^*=\frac{n_1x_1^*+\cdots+n_kx_k^*}{N}=\sum_{i=1}^{k}\frac{n_i}{N}x_i^*
+        \end{align}
+        \]
+        <p>$(平均)=$<span class="redunderline" id="dosuubunpu_heikin_betunobasyo">ここに答え</span></p>
+      </div>     
+    </div>
+  </div>
+<script>
+//行追加、行削除-------------------------------------
+var gyou_kosuu = 1 ;
+function gyoutuika() {
+  gyou_kosuu++ ;
+  $('#hyou table').append('<tr><td><input type="text" value="C'+gyou_kosuu+'" placeholder="" class="kaikyuu"></td><td><input type="number" value="'+BN(gyou_kosuu).times(10)+'" placeholder="" class="kaikyuuchi"></td><td><input type="number" value=5 placeholder="" class="dosuu"></td><td><input type="text" value="" placeholder="" disabled class="soutaidosuu"></td><td><input type="text" value="" placeholder="" disabled class="ruisekisoutaidosuu"></td><td><input type="number" value="'+BN(gyou_kosuu).times(50)+'" placeholder="" class="syotoku"></td><td><input type="text" value="" placeholder="" disabled class="soutaisyotoku"></td><td><input type="text" value="" placeholder="" disabled class="ruisekisoutaisyotoku"></td></tr>');
+};
+function gyousakujo() {
+  if ($('#hyou table tr').length >= 3) {
+    $('#hyou table').find('tr:last').remove();//findのところはchildrenではうまくいかない。tableの子要素はtbodyであるので、trはtableの孫要素となる。
+    gyou_kosuu-- ;
+  };
+};
+//度数分布の平均---------------------------------------
+function keisan_heikin(){
+  var table = document.getElementById("hiroki");
+  var cells = table.getElementsByTagName("tr");
+  var dosuu_goukei=0;
+  for(var k=1;k < cells.length; k++){
+    var dosuu = parseFloat(cells[k].querySelector(".dosuu").value);
+    dosuu_goukei=BN(dosuu_goukei).plus(dosuu);
+  };
+  var dosuubunpu_heikin_warumae=0;
+  for(var k=1;k < cells.length; k++){
+    var kaikyuuchi = parseFloat(cells[k].querySelector(".kaikyuuchi").value) ;
+    var dosuu = parseFloat(cells[k].querySelector(".dosuu").value);
+    dosuubunpu_heikin_warumae=BN(dosuubunpu_heikin_warumae).plus(BN(kaikyuuchi).times(dosuu));
+  };
+  dosuubunpu_heikin=BN(dosuubunpu_heikin_warumae).div(dosuu_goukei);
+  dosuubunpu_heikin_sisyagonyuu=(Math.round(dosuubunpu_heikin*1000)/1000).toFixed(3);
+  $('#dosuubunpu_heikin').text(dosuubunpu_heikin_sisyagonyuu);
+  $('#dosuubunpu_heikin_betunobasyo').text(dosuubunpu_heikin);
+};
+//所得計算-----------------------------------------
+function syotokukeisan(){
+  var table = document.getElementById("hiroki");
+  var cells = table.getElementsByTagName("tr");
+  for (var i = 1; i < cells.length; i++) {
+    var kaikyuuchi = cells[i].querySelector(".kaikyuuchi").value;
+    var dosuu = cells[i].querySelector(".dosuu").value;
+    syotoku_for_dainyuu=BN(kaikyuuchi).times(dosuu);
+    var syotoku = cells[i].querySelector(".syotoku");
+    syotoku.value=syotoku_for_dainyuu;
+  };
+};
+//分数で表を埋める。------------------------------------
+function keisan_hyou_bunsuu(){
+//相対度数
+  var dosuulist=$('#hyou table td input[class=dosuu]').map(function(index, element){
+    return $(element).val()
+  });
+  var dosuutotal=0;
+  $.each(dosuulist, function(index, element){
+    dosuutotal=dosuutotal+parseInt(element);
+  });
+  var table = document.getElementById("hiroki");
+  var cells = table.getElementsByTagName("tr");
+  for (var i = 1; i < cells.length; i++) {
+    var dosuu = cells[i].querySelector(".dosuu").value;
+    soutaidosuu_fake_for_dainyuu=dosuu+'/'+dosuutotal;
+    var soutaidosuu = cells[i].querySelector(".soutaidosuu");
+    soutaidosuu.value=soutaidosuu_fake_for_dainyuu;
+  };
+//累積相対度数
+  var dosuutotal_tochuu=0;
+  for (var i = 1; i < cells.length; i++) {
+    var dosuu = cells[i].querySelector(".dosuu").value;
+    dosuutotal_tochuu+=parseInt(dosuu);
+    ruisekisoutaidosuu_fake_for_dainyuu=dosuutotal_tochuu+'/'+dosuutotal;
+    var ruisekisoutaidosuu = cells[i].querySelector(".ruisekisoutaidosuu");
+    ruisekisoutaidosuu.value=ruisekisoutaidosuu_fake_for_dainyuu;
+  };
+//相対所得
+  var syotokulist=$('#hyou table td input[class=syotoku]').map(function(index, element){
+    return $(element).val()
+  });
+  var syotokutotal=0;
+  $.each(syotokulist, function(index, element){
+    syotokutotal=BN(syotokutotal).plus(element);
+  });
+  for (var i = 1; i < cells.length; i++) {
+    var syotoku = cells[i].querySelector(".syotoku").value;
+    soutaisyotoku_fake=syotoku+'/'+syotokutotal;
+    var soutaisyotoku = cells[i].querySelector(".soutaisyotoku");
+    soutaisyotoku.value=soutaisyotoku_fake;
+  };
+//累積相対所得
+  var syotoku_tochuu=0;
+  for (var i = 1; i < cells.length; i++) {
+    var syotoku = cells[i].querySelector(".syotoku").value;
+    syotoku_tochuu+=parseInt(syotoku);
+    ruisekisoutaisyotoku_fake=syotoku_tochuu+'/'+syotokutotal;
+    var ruisekisoutaisyotoku = cells[i].querySelector(".ruisekisoutaisyotoku");
+    ruisekisoutaisyotoku.value=ruisekisoutaisyotoku_fake;
+  };
+};
+//表を少数で埋める。---------------------------------------
+function keisan_hyou_decimal(){
+//相対度数
+  var dosuulist=$('#hyou table td input[class=dosuu]').map(function(index, element){
+    return $(element).val()
+  });
+  var dosuutotal=0;
+  $.each(dosuulist, function(index, element){
+    dosuutotal=dosuutotal+parseInt(element);
+  });
+  var table = document.getElementById("hiroki");
+  var cells = table.getElementsByTagName("tr");
+  for (var i = 1; i < cells.length; i++) {
+    var dosuu = cells[i].querySelector(".dosuu").value;
+    soutaidosuu_for_dainyuu=BN(dosuu).div(dosuutotal);
+    var soutaidosuu = cells[i].querySelector(".soutaidosuu");
+    soutaidosuu.value=soutaidosuu_for_dainyuu;
+  };
+//累積相対度数
+  var dosuutotal_tochuu=0;
+  for (var i = 1; i < cells.length; i++) {
+    var dosuu = cells[i].querySelector(".dosuu").value;
+    dosuutotal_tochuu+=parseInt(dosuu);
+    ruisekisoutaidosuu_for_dainyuu=BN(dosuutotal_tochuu).div(dosuutotal);
+    var ruisekisoutaidosuu = cells[i].querySelector(".ruisekisoutaidosuu");
+    ruisekisoutaidosuu.value=ruisekisoutaidosuu_for_dainyuu;
+  };
+//相対所得
+  var syotokulist=$('#hyou table td input[class=syotoku]').map(function(index, element){
+    return $(element).val()
+  });
+  var syotokutotal=0;
+  $.each(syotokulist, function(index, element){
+    syotokutotal=BN(syotokutotal).plus(element);
+  });
+  for (var i = 1; i < cells.length; i++) {
+    var syotoku = cells[i].querySelector(".syotoku").value;
+    soutaisyotoku_for_dainyuu=BN(syotoku).div(syotokutotal);
+    var soutaisyotoku = cells[i].querySelector(".soutaisyotoku");
+    soutaisyotoku.value=soutaisyotoku_for_dainyuu;
+  };
+//累積相対所得
+  var syotoku_tochuu=0;
+  for (var i = 1; i < cells.length; i++) {
+    var syotoku = cells[i].querySelector(".syotoku").value;
+    syotoku_tochuu = BN(syotoku_tochuu).plus(syotoku);
+    ruisekisoutaisyotoku_for_dainyuu=BN(syotoku_tochuu).div(syotokutotal);
+    var ruisekisoutaisyotoku = cells[i].querySelector(".ruisekisoutaisyotoku");
+    ruisekisoutaisyotoku.value=ruisekisoutaisyotoku_for_dainyuu;
+  };
+};
+</script>
+<!--2--------------------------------------------------------------------------------------->
+  <div id='mokujitwo'>  
+    <li><span class="yellow_background">{{mokujitwo}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+        <p>問題1の度数分布の分散を求めよ。</p>
+        <p><input type="button" value="解答" onclick="keisan_bunsan()"><span></span></p>
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3><span class="redunderline">分散：<span id="dosuubunpu_bunsan">???</span></span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <h4><span class="green_background">解説</span></h4>
+      <p>階級地が階級平均値と同じ数値の時、階級平均値は全データの平均値と一致する。
+        しかし、ここで求める$S_{x^*}^2$は、階級地が階級平均値と同じ数値であったとしても、
+        全データの分散と等しくなるとは限らない。
+      </p>
+      <div>
+        \[
+        \begin{align}
+        (分散)~=S_{x^*}^2=&\sum_{i=1}^{k}\frac{n_i}{N}(x_i^*-\bar{x}^*)^2\\
+                         =&\frac{n_1(x_1^*-\bar{x}^*)^2+\cdots+n_k(x_k^*-\bar{x}^*)^2}{N}
+        \end{align}
+        \]
+        <p>$(分散)~=$<span class="redunderline" id="dosuubunpu_bunsan_betunobasyo">ここに答え</span></p>
+      </div>     
+    </div>
+  </div>
+<script>
+//分散を計算。-------------------------------------------
+function keisan_bunsan(){
+  keisan_heikin();//ここの関数で定義された文字(dosuubunpu_heikin)がなぜか使える。ある関数内で定義された文字はその関数内でしか使えないはずなのに。
+  var cells = document.getElementById("hiroki").getElementsByTagName("tr");
+  var dosuu_goukei=0;
+  for(var k=1;k < cells.length ;k++){
+    var dosuu=cells[k].querySelector('.dosuu').value;
+    dosuu_goukei=BN(dosuu_goukei).plus(dosuu);
+  };
+  var dosuubunpu_bunsan=0;
+  for(var k=1;k<cells.length;k++){
+    var dosuu=cells[k].querySelector('.dosuu').value;
+    var kaikyuuchi=cells[k].querySelector('.kaikyuuchi').value;
+    dosuubunpu_bunsan=BN(dosuubunpu_bunsan).plus(BN(kaikyuuchi).minus(dosuubunpu_heikin).pow(2).times(dosuu).div(dosuu_goukei));
+  };
+  dosuubunpu_bunsan_sisyagonyuu=(Math.round(dosuubunpu_bunsan*1000)/1000).toFixed(3);
+  $('#dosuubunpu_bunsan').text(dosuubunpu_bunsan_sisyagonyuu);
+  $('#dosuubunpu_bunsan_betunobasyo').text(dosuubunpu_bunsan);
+};
+</script>
+<!--3--------------------------------------------------------------------------------------->
+  <div id='mokujithree'>  
+    <li><span class="yellow_background">{{mokujithree}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+        <p>ジニ係数($G$)を求めよ。</p>
+        <p><input type="button" value="解答" onclick="keisan_jinikeisuu()"><span>←少数表示にしてから押す。</span></p>
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3><span class="redunderline">ジニ係数：<span id="jinikeisuu">???</span></span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <h4><span class="green_background">解説</span></h4>
+      <p></p>
+      <div>
+        \[
+        \begin{align}
+        G=&\sum_{i=1}^{k-1}(a_i-b_i)(a_{i+1}-a_{i-1})\\
+         =&\frac{1}{2n^2\bar{x}}\sum_{i=1}^n\sum_{j=1}^n\mid{x_i-x_j}\mid
+        \end{align}
+        \]
+        <p>$G=$<span class="redunderline" id="jinikeisuu_betunobasyo">ここに答え</span></p>
+      </div>     
+    </div>
+  </div>
+<script>
+//keisan_jinikeisuu----------------------------------------
+function keisan_jinikeisuu(){
+  var jinikeisuu=0;
+  var table = document.getElementById("hiroki");
+  var cells = table.getElementsByTagName("tr");
+  for (var i = 1; i < cells.length - 1; i++) {
+    var ruisekisoutaisyotoku = cells[i].querySelector(".ruisekisoutaisyotoku").value ;
+    if(i==1){
+      var ruisekisoutaidosuu1 =BN(0);
+    }else{
+      var ruisekisoutaidosuu1 = cells[i-1].querySelector(".ruisekisoutaidosuu").value;
+    };
+    var ruisekisoutaidosuu2 = cells[i].querySelector(".ruisekisoutaidosuu").value ;
+    var ruisekisoutaidosuu3 = cells[i+1].querySelector(".ruisekisoutaidosuu").value ;
+    jinikeisuu=BN(jinikeisuu).plus((BN(ruisekisoutaidosuu2).minus(ruisekisoutaisyotoku)).times(BN(ruisekisoutaidosuu3).minus(ruisekisoutaidosuu1)));
+  };
+  jinikeisuu_sisyagonyuu=(Math.round(jinikeisuu*1000)/1000).toFixed(3);
+  $('#jinikeisuu').text(jinikeisuu_sisyagonyuu);
+  $('#jinikeisuu_betunobasyo').text(jinikeisuu);
+};
+</script>
+<script>
+//focusoutした時に、minとmaxが反映されるように。全体。
+$('input[type="number"]').focusout(function() {
+    if(typeof $(this).attr('min') !== "undefined" && parseInt($(this).val()) < parseInt($(this).attr('min')))
+        $(this).val($(this).attr('min'));
+    else if(typeof $(this).attr('max') !== "undefined" && parseInt($(this).val()) > parseInt($(this).attr('max')))
+        $(this).val($(this).attr('max'));
+    else if(typeof $(this).attr('min') !== "undefined" && $(this).val() === '')
+        $(this).val($(this).attr('min'));
+});
+</script>
+<!--
+    <li>{{mokujifour}}</li>
+    <li>{{mokujifive}}</li>
+    <li>{{mokujisix}}</li>
+    <li>{{mokujiseven}}</li>
+    <li>{{mokujieight}}</li>
+    <li>{{mokujinine}}</li>
+    <li>{{mokujiten}}</li>
+    <li>{{mokujieleven}}</li>
+    <li>{{mokujitwelve}}</li>
+  -->
+</ol>
+{% endblock %}

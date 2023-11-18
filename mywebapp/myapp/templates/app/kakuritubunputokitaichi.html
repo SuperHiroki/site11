@@ -1,0 +1,351 @@
+{% extends 'app/base.html' %}
+{% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/sonota.css' %}">
+
+<ol id="ol">
+  <!--1-------------------------------------------------------------------------------------->
+  <div id='mokujione'><!--ここに飛べるように、idを作った。-->
+    <li><span class="yellow_background">{{mokujione}}</span></li>
+    <div><!--問題-->
+        <h4><span class="green_background">問題</span></h4>
+        <p>
+          下の表はあるルーレットに書かれている数値($x_0,x_1･･･,x_n$)とそれぞれが出る確率を示したものである。
+          $x_k$が出たとき、$g(x_k)$点獲得できるとする。ただし、$g(x)=ax^b+c$とする。
+          下の表のルーレットを回したとき、点数の期待値を求めよ。
+        </p>
+        <p>$a=$<input type="number" value="1" id="a_value"></p>
+        <p>$b=$<input type="number" value="1" id="b_value"></p>
+        <p>$c=$<input type="number" value="0" id="c_value"></p>
+        <p><input type="button" value="行追加" onclick="gyoutuika_risankakurituhensuu()"></p>
+        <p><input type="button" value="行削除" onclick="gyousakujo_risankakurituhensuu()"></p>
+        <div>
+          <table id="table_risankakurituhensuu">
+            <tr><th>$k$</th><th>$x_k$</th><th>$g(x_k)$(点)</th><th>確率(%)</th></tr>
+            <tr><td>1</td><td><input class="suuchi_risankakurituhensuu" type="number" value="1"></td><td><input type="number" class="tensuu_risankakurituhensuu" disabled></td><td><input class="kakuritu_risankakurituhensuu" type="number" value="10"></td></tr>
+          </table>
+        </div>
+        <p><input type="button" value="ルーレット作成" onclick="draw_circle()">←確率の合計を100にしてから押してください。</p>
+        <div id="canvas1" class="canvas">
+            <canvas id="myDoughnutChart">
+            </canvas>
+        </div>
+        <div class="z_index_up">
+          <p><input type="button" value="解答" onclick="keisan_kitaichi_risankakurituhensuu()"></p>
+        </div>
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3><span class="redunderline"><span id="kitaichi_risankakurituhensuu">???</span>点</span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <p></p>
+      <h4><span class="green_background">解説</span></h4>
+      <p>期待値$E[g(X)]$は次の式で求められる。</p>
+      <div>
+        \[
+        E[g(X)]=\mu=\left\{
+        \begin{array}{ll}
+        \sum_{k=0}^{n}g(x_k)p(x_k){\longleftarrow}Xが離散確率変数の時\\
+        \int_{-\infty}^{\infty}g(x)f(x)dx{\longleftarrow}Xが連続確率変数の時
+        \end{array}
+        \right.
+        \]
+        <p>$E[g(X)]=$<span id="kitaichi_risankakurituhensuu_betunobasyo" class="redunderline">ここに答え</span></p>
+      </div>     
+    </div>
+  </div>
+<script>
+//行を増やす、削除する-------------------------------------------------------
+var gyou_kosuu=1;
+function gyoutuika_risankakurituhensuu(){
+  gyou_kosuu+=1;
+  $('#table_risankakurituhensuu').append('<tr><td>'+gyou_kosuu+'</td><td><input class="suuchi_risankakurituhensuu" type="number" value="'+gyou_kosuu+'"></td><td><input type="number" class="tensuu_risankakurituhensuu" disabled></td><td><input class="kakuritu_risankakurituhensuu" type="number" value="10"></td></tr>');
+};
+function gyousakujo_risankakurituhensuu(){
+  if(gyou_kosuu>1){
+    gyou_kosuu-=1;
+    $('#table_risankakurituhensuu').find('tr:last').remove();
+  };
+};
+</script>
+<script>
+//円グラフを描画する-----------------------------------------------------------
+var canvas = document.getElementById("myDoughnutChart");
+if (canvas.getContext){
+	var ctx = canvas.getContext('2d');
+};
+var mychart;
+function draw_circle(){
+  $('#canvas1').addClass('opencanvas');
+  var tensuulist_risankakurituhensuu=[];
+  var kakuritulist_risankakurituhensuu=[];
+  var cells = document.getElementById("table_risankakurituhensuu").getElementsByTagName("tr");
+  for(var i=1; i<cells.length; i++){
+    tensuulist_risankakurituhensuu.push(cells[i].querySelector('.suuchi_risankakurituhensuu').value);
+  };
+  for(var i=1; i<cells.length; i++){
+    kakuritulist_risankakurituhensuu.push(cells[i].querySelector('.kakuritu_risankakurituhensuu').value);
+  };
+  if (mychart) {    
+    mychart.destroy();  
+  };
+  mychart= new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: tensuulist_risankakurituhensuu,
+      datasets: [{
+        backgroundColor: [
+          "#0000FF","#00FF00","#FF00FF","#000080","#00FFFF","#808000","#008080","#FFFF00","#800080","#008000",'#FF0000','#800000',
+          "#E60012","#8FC31F","#00A0E9",'#920783',"#EB6100",'#22AC38','#0086D1','#BE0081','#F39800','#009944','#0068B7','#E4007F',"#FCC800",'#009B6B','#00479d','#E5006A','#FFF100','#009E96','#1D2088','#E5004F','#CFDB00','#00A0C1','#601986','#E60033',
+          "#0000FF","#00FF00","#FF00FF","#000080","#00FFFF","#808000","#008080","#FFFF00","#800080","#008000",'#FF0000','#800000',
+          "#E60012","#8FC31F","#00A0E9",'#920783',"#EB6100",'#22AC38','#0086D1','#BE0081','#F39800','#009944','#0068B7','#E4007F',"#FCC800",'#009B6B','#00479d','#E5006A','#FFF100','#009E96','#1D2088','#E5004F','#CFDB00','#00A0C1','#601986','#E60033',
+        ],
+        data: kakuritulist_risankakurituhensuu ,
+      }],
+    },
+    options: {
+      maintainAspectRatio: false,
+      responsive: true, 
+      title: {
+        display: true,
+        text: '離散確率変数のルーレット',
+        fontSize: 35,
+      },
+      plugins: {
+        labels: {
+          render: function (args) {
+            return args.label +'\n'+ args.value+'%';
+          },
+          fontColor: 'white',
+          fontSize: 20,
+        },
+      },
+    },
+  });
+};
+function keisan_kitaichi_risankakurituhensuu(){
+  var a_value=parseFloat($('#a_value').val());
+  var b_value=parseFloat($('#b_value').val());
+  var c_value=parseFloat($('#c_value').val());
+  var kitaichi_risankakurituhensuu=0;
+  var cells = document.getElementById("table_risankakurituhensuu").getElementsByTagName("tr");
+  for(var i=1; i<cells.length; i++){
+    suuchi_konoretu=cells[i].querySelector('.suuchi_risankakurituhensuu').value;
+    kakuritu_konoretu=cells[i].querySelector('.kakuritu_risankakurituhensuu').value;
+    tensuu_konoretu=BN(suuchi_konoretu).pow(b_value).times(a_value).plus(c_value);
+    cells[i].querySelector('.tensuu_risankakurituhensuu').value=tensuu_konoretu;
+    kitaichi_risankakurituhensuu=BN(kitaichi_risankakurituhensuu).plus( BN(tensuu_konoretu).times(kakuritu_konoretu).div(100) );
+  };
+  $('#kitaichi_risankakurituhensuu').text((Math.round(kitaichi_risankakurituhensuu*1000)/1000).toFixed(3));
+  $('#kitaichi_risankakurituhensuu_betunobasyo').text(kitaichi_risankakurituhensuu);
+};
+</script>
+  <div id='mokujitwo'>  
+    <li><span class="yellow_background">{{mokujitwo}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+      <p>
+        下のルーレットは0~<input type="number" value="10" id="max_renzoku">までの数値が連続的に出る。それによって得られる点数は$g(x)=ax^b+c$である。
+        下のルーレットを一回回したときの期待値を求めよ。
+      </p>
+      <p>$a=$<input type="number" value="1" id="a_value_renzoku"></p>
+      <p>$b=$<input type="number" value="1" id="b_value_renzoku"></p>
+      <p>$c=$<input type="number" value="0" id="c_value_renzoku"></p>
+      <div class="canvas opencanvas">
+        <canvas id="myDoughnutChart_renzoku">
+        </canvas>
+        <div id="circle_text">
+          <h3>
+            <span class="char1 renzoku_haichi"><span>0</span></span>
+            <span class="char2 renzoku_haichi"><span id="renzoku_memori_1">1</span></span>
+            <span class="char3 renzoku_haichi"><span id="renzoku_memori_2">2</span></span>
+            <span class="char4 renzoku_haichi"><span id="renzoku_memori_3">3</span></span>
+            <span class="char5 renzoku_haichi"><span id="renzoku_memori_4">4</span></span>
+            <span class="char6 renzoku_haichi"><span id="renzoku_memori_5">5</span></span>
+            <span class="char7 renzoku_haichi"><span id="renzoku_memori_6">6</span></span>
+            <span class="char8 renzoku_haichi"><span id="renzoku_memori_7">7</span></span>
+            <span class="char9 renzoku_haichi"><span id="renzoku_memori_8">8</span></span>
+            <span class="char10 renzoku_haichi"><span id="renzoku_memori_9">9</span></span>
+          </h3>
+        </div>
+      </div>
+      <div>
+        <p><input type="button" value="解答" onclick="keisan_kitaichi_renzokukakurituhensuu()"></p>
+      </div>
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3><span class="redunderline"><span id="kitaichi_renzokukakurituhensuu">???</span>点</span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <p></p>
+      <h4><span class="green_background">解説</span></h4>
+      <p>期待値$E[g(X)]$は次の式で求められる。</p>
+      <div>
+        \[
+        E[g(X)]=\mu= \left\{
+        \begin{array}{ll}
+        \sum_{k=0}^{n}g(x_k)p(x_k){\longleftarrow}Xが離散確率変数の時\\
+        \int_{-\infty}^{\infty}g(x)f(x)dx{\longleftarrow}Xが連続確率変数の時
+        \end{array}
+        \right.
+        \]
+        <p>$E[g(X)]=$<span id="kitaichi_renzokukakurituhensuu_betunobasyo" class="redunderline">ここに答え</span></p>
+      </div>     
+    </div>
+  </div>
+<script>
+var canvas_renzoku = document.getElementById("myDoughnutChart_renzoku");
+if (canvas_renzoku.getContext){
+	var ctx_renzoku = canvas_renzoku.getContext('2d');
+};
+var mychart_renzoku;
+mychart_renzoku= new Chart(ctx_renzoku, {
+    type: 'doughnut',
+    data: {
+      labels: ['0<x<max',],
+      datasets: [{
+        backgroundColor: [
+          "#0000FF","#00FF00","#FF00FF","#000080","#00FFFF","#808000","#008080","#FFFF00","#800080","#008000",'#FF0000','#800000',
+          "#E60012","#8FC31F","#00A0E9",'#920783',"#EB6100",'#22AC38','#0086D1','#BE0081','#F39800','#009944','#0068B7','#E4007F',"#FCC800",'#009B6B','#00479d','#E5006A','#FFF100','#009E96','#1D2088','#E5004F','#CFDB00','#00A0C1','#601986','#E60033',
+          "#0000FF","#00FF00","#FF00FF","#000080","#00FFFF","#808000","#008080","#FFFF00","#800080","#008000",'#FF0000','#800000',
+          "#E60012","#8FC31F","#00A0E9",'#920783',"#EB6100",'#22AC38','#0086D1','#BE0081','#F39800','#009944','#0068B7','#E4007F',"#FCC800",'#009B6B','#00479d','#E5006A','#FFF100','#009E96','#1D2088','#E5004F','#CFDB00','#00A0C1','#601986','#E60033',
+        ],
+        data: [100] ,
+      }],
+    },
+    options: {
+      maintainAspectRatio: false,
+      responsive: true, 
+      title: {
+        display: true,
+        text: '連続確率変数のルーレット',
+        fontSize: 35,
+      },
+      plugins: {
+        labels: {
+          render: function (args) {
+            return ;
+          },
+          fontColor: 'white',
+          fontSize: 20,
+        },
+      },
+    },
+});
+</script>
+<script>
+//ルーレットの目盛り
+$('#max_renzoku').focusout(function(){
+  var max_renzoku=parseFloat(document.getElementById('max_renzoku').value);
+  $('#renzoku_memori_1').text(new BigNumber(max_renzoku).div(10).times(1));
+  $('#renzoku_memori_2').text(new BigNumber(max_renzoku).div(10).times(2));
+  $('#renzoku_memori_3').text(new BigNumber(max_renzoku).div(10).times(3));
+  $('#renzoku_memori_4').text(new BigNumber(max_renzoku).div(10).times(4));
+  $('#renzoku_memori_5').text(new BigNumber(max_renzoku).div(10).times(5));
+  $('#renzoku_memori_6').text(new BigNumber(max_renzoku).div(10).times(6));
+  $('#renzoku_memori_7').text(new BigNumber(max_renzoku).div(10).times(7));
+  $('#renzoku_memori_8').text(new BigNumber(max_renzoku).div(10).times(8));
+  $('#renzoku_memori_9').text(new BigNumber(max_renzoku).div(10).times(9));
+});
+//連続確率変数の期待値を計算
+function keisan_kitaichi_renzokukakurituhensuu(){
+  var a_value_renzoku=parseFloat(document.getElementById('a_value_renzoku').value);
+  var b_value_renzoku=parseFloat(document.getElementById('b_value_renzoku').value);
+  var c_value_renzoku=parseFloat(document.getElementById('c_value_renzoku').value);
+  var max_renzoku=parseFloat(document.getElementById('max_renzoku').value);
+  kitaichi_renzoku=(BN(1).div(max_renzoku)).times(   BN(a_value_renzoku).div(BN(b_value_renzoku).plus(1)).times(BN(max_renzoku).pow(BN(b_value_renzoku).plus(1))).plus(BN(c_value_renzoku).times(max_renzoku))   );
+  $('#kitaichi_renzokukakurituhensuu_betunobasyo').text(kitaichi_renzoku);
+  $('#kitaichi_renzokukakurituhensuu').text((Math.round(kitaichi_renzoku*1000)/1000).toFixed(3));
+};
+</script>
+  <div id='mokujithree'>  
+    <li><span class="yellow_background">{{mokujithree}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+      <p>
+        問題1,2の分散($Var(X)$)と標準偏差($SD(X)$)を求めよ。
+      </p>
+      <div>
+        <p><input type="button" value="解答" onclick="keisan_var_sd()">←問題1の確率の合計を100にしてから押してください。</p>
+      </div>
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3><span class="redunderline">問題1の分散($Var(X)$)：<span id="risan_bunsan">???</span></span></h3>
+      <h3><span class="redunderline">問題1の標準偏差($SD(X)$)：<span id="risan_hyoujunhensa">???</span></span></h3>
+      <h3><span class="redunderline">問題2の分散($Var(X)$)：<span id="renzoku_bunsan">???</span></span></h3>
+      <h3><span class="redunderline">問題2の標準偏差($SD(X)$)：<span id="renzoku_hyoujunhensa">???</span></span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <p></p>
+      <h4><span class="green_background">解説</span></h4>
+      <p>分散($Var(X)$)と標準偏差($SD(X)$)は次の式で求められる。</p>
+      <div>
+        \[
+        \sigma^2=Var(X)=E[(x-\mu)^2]= \left\{
+        \begin{array}{ll}
+        \sum_{k=0}^{n}(x_k-\mu)^2p(x_k){\longleftarrow}Xが離散確率変数の時\\
+        \int_{-\infty}^{\infty}(x-\mu)^2f(x)dx{\longleftarrow}Xが連続確率変数の時
+        \end{array}
+        \right.
+        \\
+        \sigma=SD(X)=\sqrt{Var(X)}
+        \]
+        <p>$問題1のVar(X)=$<span id="var1" class="redunderline">ここに答え</span></p>
+        <p>$問題1のSD(X)=$<span id="sd1" class="redunderline">ここに答え</span></p>
+        <p>$問題2のVar(X)=$<span id="var2" class="redunderline">ここに答え</span></p>
+        <p>$問題2のSD(X)=$<span id="sd2" class="redunderline">ここに答え</span></p>
+      </div>     
+    </div>
+  </div>
+<script>
+function keisan_var_sd(){
+//var1,sd1
+  var var1=0;
+  var heikin_for_var1=0;
+  var heikin_jijou_for_var1=0;
+  var x_jijou_kitaichi_for_var1=0;
+  var cells = document.getElementById("table_risankakurituhensuu").getElementsByTagName("tr");
+  for(var i=1; i<cells.length; i++){
+    suuchi_konoretu=cells[i].querySelector('.suuchi_risankakurituhensuu').value;
+    kakuritu_konoretu=(cells[i].querySelector('.kakuritu_risankakurituhensuu').value)/100;
+    x_jijou_kitaichi_for_var1=BN(x_jijou_kitaichi_for_var1).plus(  BN(suuchi_konoretu).pow(2).times(kakuritu_konoretu)  );
+    heikin_for_var1=BN(heikin_for_var1).plus(  BN(suuchi_konoretu).times(kakuritu_konoretu)  )
+  };
+  heikin_jijou_for_var1=BN(heikin_for_var1).pow(2);
+  var1=BN(x_jijou_kitaichi_for_var1).minus(heikin_jijou_for_var1);
+  $('#var1').text(var1);
+  $('#risan_bunsan').text((Math.round(var1*1000)/1000).toFixed(3));
+  sd1=BN(var1).sqrt();
+  $('#sd1').text(sd1);
+  $('#risan_hyoujunhensa').text((Math.round(sd1*1000)/1000).toFixed(3));
+//var2,sd2
+  var var2=0;
+  var heikin_for_var2=0;
+  var heikin_jijou_for_var2=0;
+  var x_jijou_kitaichi_for_var2=0;
+  var max_renzoku=parseFloat(document.getElementById('max_renzoku').value);
+  x_jijou_kitaichi_for_var2=BN(1).div(BN(3).times(max_renzoku)).times(BN(max_renzoku).pow(3));
+  heikin_for_var2=BN(1).div(BN(2).times(max_renzoku)).times(BN(max_renzoku).pow(2));
+  heikin_jijou_for_var2=BN(heikin_for_var2).pow(2);
+  var2=BN(x_jijou_kitaichi_for_var2).minus(heikin_jijou_for_var2);
+  $('#var2').text(var2);
+  $('#renzoku_bunsan').text((Math.round(var2*1000)/1000).toFixed(3));
+  sd2=BN(var2).sqrt();
+  $('#sd2').text(sd2);
+  $('#renzoku_hyoujunhensa').text((Math.round(sd2*1000)/1000).toFixed(3));
+};
+</script>
+  <!---
+      <li>{{mokujifour}}</li>
+      <li>{{mokujifive}}</li>
+      <li>{{mokujisix}}</li>
+      <li>{{mokujiseven}}</li>
+      <li>{{mokujieight}}</li>
+      <li>{{mokujinine}}</li>
+      <li>{{mokujiten}}</li>
+      <li>{{mokujieleven}}</li>
+      <li>{{mokujitwelve}}</li>
+  -->
+    </ol>
+{% endblock %}

@@ -1,0 +1,456 @@
+/*menubox-------------------------------------------------------------------------------------*/
+#menubox{
+    position: fixed;
+    display: block;
+    z-index: 100;
+    top: 12vh;
+    left: -100%;
+    cursor: pointer;
+    transition: left .8s;
+}
+#menubox.open{
+    left: 0;
+}
+#menubox dt {
+    position: relative;
+    display: block;
+    width: 40vw;
+    height: 10vh;
+    border: ridge 1vW rgb(112, 112, 112);
+    background-color: rgb(255, 255, 255);
+    text-align: center;
+    color: rgb(0, 0, 0);
+    box-shadow: .75vw 1vw 2.5vw black;
+}
+#menubox dt:hover{
+    background-color: rgb(0, 255, 136);
+}
+#menubox dt a{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    word-break: keep-all;
+}
+#menubox dt span{
+    font-size: 100%;
+}
+#menubox dd {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    margin: 0%;
+    width: 70vw;
+    height: 0px;
+    border: ridge 0px rgb(114, 114, 114);
+    background-color: rgb(0, 0, 0);
+    text-align: center;
+    box-shadow: .75vw 1vw 2.5vw black;
+    transition: height .8s, border .8s;
+}
+#menubox dd.open{
+    height: 10vh;
+    border: ridge 1vW rgb(138, 138, 138);
+}
+#menubox dd:hover{
+    background-color: rgb(0, 255, 136);
+}
+#menubox dd a{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    word-break: keep-all;
+}
+#menubox dd span{
+    font-size: 86%;
+    color: white;
+}
+/*強制改行----------------------------------------------------------------------------------*/
+.kaigyoumae::before{
+    content: "\A" ;
+    white-space: pre;
+}
+.kaigyouato::after{
+    content: "\A" ;
+    white-space: pre;
+}
+/*menubutton--------------------------------------------------------------------------------*/
+#menubutton{
+    position: fixed;
+    z-index: 100;
+    top: 0px;
+    left: 0px;
+    width: 12vh;
+    height: 12vh;
+    background-color: rgba(0, 0, 0, 0.747);
+    cursor: pointer;
+    border: dashed black .5vw;
+}
+#menubutton:hover{
+    background-color: rgba(0, 255, 136, 0.747);
+}
+#menubutton i{
+    position: absolute;
+    display: block;
+    width: 75%;
+    height: 8%;
+    background-color: rgb(255, 255, 255);
+    transition: all .8s;
+}
+#menubutton i:first-child{
+    top: 25%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+#menubutton i:nth-child(2){
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+#menubutton i:last-child{
+    top: 75%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+#menubutton.open i:first-child{
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%) rotate(45deg);
+}
+#menubutton.open i:nth-child(2){
+    top: 50%;
+    left: 12.5%;
+    transform: translate(-50%,-50%);
+    width: 0%;
+    opacity: 0;
+}
+#menubutton.open i:last-child{
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%) rotate(-45deg);
+}
+/*上部----------------------------------------------------------------------------------------*/
+#joubu{
+    position: absolute;
+    display: block;
+    z-index: 5;
+    top: 0vh;
+    left: 0vw;
+    width: 100vw;
+    height: 16vh;
+    background-image: radial-gradient(circle at 25% 50%,blue,red);
+}
+#background_for_change_opacity{
+    position: absolute;
+    display: block;
+    z-index: 6;
+    top: 0vh;
+    left: 0vw;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(circle at 25% 50%,rgb(0, 255, 55),rgb(0, 183, 255));
+    opacity: 1;
+    transition: opacity .8s;
+}
+#background_for_change_opacity.changebg{
+    opacity: 0;
+}
+#daimei_ichibanue{
+    position: absolute;
+    display: block;
+    z-index: 8;
+    top: 50%;
+    left: 50%;
+    color: aliceblue;
+    transform: translate(-50%,-50%);
+}
+#hajikuball{
+    position: absolute;
+    display: block;
+    z-index: 7;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+}
+#hajikuball dd{
+    position: absolute;
+    display: block;
+    width: 3vh;
+    height: 3vh;
+    background-color: black;
+    background-image: radial-gradient(circle,red,blue);
+    border-radius: 100%;
+    top: 100%;
+    transform: translate(-50%,-50%);
+}
+#for_border{
+    position: absolute;
+    display: block;
+    z-index: 9;
+    width: 100%;
+    height: 100%;
+    border: solid black 0vw;
+    transition: border .2s;
+}
+#for_border:hover{
+    border: groove rgb(148, 148, 148) 2.75vw;
+}
+/*-----*/
+#hajikuball dd:first-of-type{
+    left: 10%;
+}
+#hajikuball dd:nth-of-type(2){
+    left: 20%;
+}
+#hajikuball dd:nth-of-type(3){
+    left: 30%;
+}
+#hajikuball dd:nth-of-type(4){
+    left: 40%;
+}
+#hajikuball dd:nth-of-type(5){
+    left: 50%;
+}
+#hajikuball dd:nth-of-type(6){
+    left: 60%;
+}
+#hajikuball dd:nth-of-type(7){
+    left: 70%;
+}
+#hajikuball dd:nth-of-type(8){
+    left: 80%;
+}
+#hajikuball dd:last-of-type{
+    left: 90%;
+}
+/*-----*/
+#hajikuball dd:first-of-type.houbutusen{
+    left: 10%;
+    animation-delay: 0s;
+}
+#hajikuball dd:nth-of-type(2).houbutusen{
+    left: 20%;
+    animation-delay: .1s;
+}
+#hajikuball dd:nth-of-type(3).houbutusen{
+    left: 30%;
+    animation-delay: .2s;
+}
+#hajikuball dd:nth-of-type(4).houbutusen{
+    left: 40%;
+    animation-delay: .3s;
+}
+#hajikuball dd:nth-of-type(5).houbutusen{
+    left: 50%;
+    animation-delay: .4s;
+}
+#hajikuball dd:nth-of-type(6).houbutusen{
+    left: 60%;
+    animation-delay: .5s;
+}
+#hajikuball dd:nth-of-type(7).houbutusen{
+    left: 70%;
+    animation-delay: .6s;
+}
+#hajikuball dd:nth-of-type(8).houbutusen{
+    left: 80%;
+    animation-delay: .7s;
+}
+#hajikuball dd:last-of-type.houbutusen{
+    left: 90%;
+    animation-delay: .8s;
+}
+/*hamonarea-------------------------------------------------------------------------------------*/
+#hamonarea{
+    position: absolute;
+    display: block;
+    z-index: 12;
+    top: 16vh;
+    left: 0vh;
+    width: 100vw;
+    height: 34vh;
+    background-color: rgb(0, 153, 255);
+    border: paleturquoise ridge 2vh;
+}
+#hamon{
+    position: absolute;
+    display: block;
+}
+#hamon dd{
+    position: absolute;
+    display: block;
+    border-radius: 100%;
+    top: 50%;
+    left: 50%;
+    width: 8vh;
+    height: 8vh;
+    transform: scale(0);
+    opacity: 1;
+}
+#hamon dd:first-of-type{
+    background-color: rgb(0, 195, 255);
+}
+#hamon dd:nth-of-type(2){
+    background-color: rgb(0, 195, 255);
+}
+#hamon dd:nth-of-type(3){
+    background-color: rgb(0, 195, 255);
+}
+#hamon dd:last-of-type{
+    background-color: rgb(0, 183, 255);
+}
+#hamon dd:first-of-type.hamontukuru{
+    animation-delay: 0s;
+}
+#hamon dd:nth-of-type(2).hamontukuru{
+    animation-delay: 0.3s;
+}
+#hamon dd:nth-of-type(3).hamontukuru{
+    animation-delay: 0.6s;
+}
+#hamon dd:last-of-type.hamontukuru{
+    animation-delay: 0.9s;
+}
+#namiuedaimei{
+    position: absolute;
+    display: block;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    text-align: center;
+    word-break: keep-all;
+}
+#namiuedaimei span{
+    font-size: 65%;
+}
+/*目次、問題と解答解説-------------------------------------------------------------------------------*/
+#mokuji_mondai_kaitoukaisetu_area_zentai{
+    position: absolute;
+    display: block;
+    top: 50vh;
+    left: 0vw;
+    width: 100vw;
+}
+.mokujinado_area_sorezore{
+    position: relative;
+    display: block;
+    top: 0vw;
+    left: 0vw;
+    width: 100%;
+}
+.daimei_mokujinado_bg{
+    position: relative;
+    display: block;
+    height: 10vh;
+    background-image: linear-gradient(-45deg,red,blue);
+}
+.daimei_mokujinado_bg h2{
+    position: absolute;
+    display: block;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    text-align: center;
+    word-break: keep-all;
+}
+.mokujinado_content_sorezore{
+    position: relative;
+    display: block;
+}
+.mokujinado_content_sorezore ol{
+    padding: 2.2vh 5.5vw;
+}
+/*問題中身--------------------------------------------------------------------------------*/
+.mondainakami{
+    position: relative;
+    display: block;
+    width: 100%;
+}
+/*@keyframes_class------------------------------------------------------------------------------*/
+.houbutusen{
+    animation-name: houbutusen;
+    animation-duration: .56s;
+    animation-timing-function: ease-out;
+    animation-iteration-count: 2;
+    animation-direction: alternate;
+    animation-fill-mode: both;
+}
+.hamontukuru{
+    animation-name: hamontukuru;
+    animation-duration: 5.0s;
+    animation-timing-function: ease-out;
+    animation-iteration-count: 1;
+    animation-direction: normal;
+    animation-fill-mode: none;/*noneにしても、topとleftの位置は、htmlで取得しているので、元に戻らない。*/
+}
+.blinking{
+    animation: blinking .55s cubic-bezier(.4, 0, 1, .4) alternate infinite;
+}
+/*@keyframes------------------------------------------------------------------------------*/
+@keyframes houbutusen{
+    from{
+        top: 100%;
+    }
+    to{
+        top: 10%;
+    }
+}
+@keyframes hamontukuru{
+    0%{
+        transform: scale(0);
+        opacity: 1;
+    }
+    80%{
+        transform: scale(2);
+        opacity: 0;
+    }
+    100%{
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+@keyframes blinking {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+}
+/*赤い下線など----------------------------------------------------------------------------------*/
+#ol li{
+    font-size: xx-large;
+}
+.yellow_background{
+    background-color: #e5ff00;
+}
+.green_background{
+    background-color: #00ff55;
+}
+.blue_background_usui{
+    background-color: #00ccff;
+}
+.redunderline{
+    border-bottom: red solid ;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+table td, table th{
+    border: solid 1px black;
+    text-align:  center;
+    padding: 5px;
+}
+table input{
+    width: 95%;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.error{
+    background-color: rgb(255, 0, 0);
+    border: rgb(0, 0, 0) dashed .45vw;
+}

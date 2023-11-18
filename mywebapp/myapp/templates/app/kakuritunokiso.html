@@ -1,0 +1,323 @@
+{% extends 'app/base.html' %}
+{% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/sonota.css' %}">
+
+<ol id="ol">
+<!--1-------------------------------------------------------------------------------------->
+<div id='mokujione'><!--ここに飛べるように、idを作った。-->
+  <li><span class="yellow_background">{{mokujione}}</span></li>
+  <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+      <p>
+        陽性反応が出る確率：$P(A)$<br/>
+        病気にかかっている確率：$P(B)$とする。<br/>
+        ある病気の検査では、本当は病気にかかっていないのに間違えて陽性反応が出る確率は
+        <span><input id="soccer" type="number" min="0" max="100" step="1" value="10" placeholder="0から100の数値" required></span>
+        %(<span>$P(A|B^c)$</span>)であり、本当は病気にかかっているのに間違えて陰性となる確率は
+        <span><input id="baseball" type="number" min="0" max="100" step="1" value="1" placeholder="0から100の数値" required></span>
+        %(<span>$P(A^c|B)$</span>)である。その病気にかかっているのは全体の
+        <span><input id="tennis" type="number" min="0" max="100" step="1" value="10" placeholder="0から100の数値" required></span>
+        %(<span>$P(B)$</span>)である。検査をして陽性反応が出たとき、本当に病気にかかっている確率($P(B|A)$)を求めよ。
+      </p>
+      <p><input type="button" value="解答" onclick="keisan_joukentukikakuritu()"></p>    　
+  </div>
+  <div><!--解説-->
+    <h4><span class="green_background">解答</span></h4> 
+    <h3><span class="redunderline"><span id="joukentukikakuritu">???</span>$\%$</span></h3>
+    <p>(小数点第四位四捨五入)</p>
+    <p></p>
+    <h4><span class="green_background">解説</span></h4>
+    <p></p>
+    <div>
+      \[
+      \begin{align}
+      P(B|A)=&\frac{P(B\cap{A})}{P(A)}\\
+            =&\frac{P(A|B)P(B)}{P(A|B)P(B)+P(A|B^c)P(B^c)}\longleftarrowベイズの定理
+      \end{align}
+      \]
+      <p>$P(B|A)=$<span id="joukentukikakuritu_betunobasyo" class="redunderline">ここに答え</span></p>
+    </div>     
+  </div>
+</div>
+<script>
+//条件付き確率の計算。------------------------------------------------------
+function keisan_joukentukikakuritu(){
+  var soccer=document.getElementById('soccer').value;
+  soccer=soccer/100;
+  var baseball=document.getElementById('baseball').value;
+  baseball=baseball/100;
+  var tennis=document.getElementById('tennis').value;
+  tennis=tennis/100;
+  var joukentukikakuritu_no_percent=(  BN(tennis).minus(BN(baseball).times(tennis))  ).div(  (BN(tennis).minus(BN(baseball).times(tennis))).plus(BN(soccer).times(BN(1).minus(tennis)))  );
+  joukentukikakuritu_percent_floor=(Math.round(joukentukikakuritu_no_percent*100*1000)/1000).toFixed(3);
+  $('#joukentukikakuritu').text(joukentukikakuritu_percent_floor);
+  $('#joukentukikakuritu_betunobasyo').text(joukentukikakuritu_no_percent);
+};
+//focusoutした時に、minとmaxが反映されるように。全体。-----------------------
+$('input[type="number"]').focusout(function() {
+      if(typeof $(this).attr('min') !== "undefined" && parseInt($(this).val()) < parseInt($(this).attr('min')))
+          $(this).val($(this).attr('min'));
+      else if(typeof $(this).attr('max') !== "undefined" && parseInt($(this).val()) > parseInt($(this).attr('max')))
+          $(this).val($(this).attr('max'));
+      else if(typeof $(this).attr('min') !== "undefined" && $(this).val() === '')
+          $(this).val($(this).attr('min'));
+});
+</script>
+  <div id='mokujitwo'>  
+    <li><span class="yellow_background">{{mokujitwo}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+      <p>
+        事象$A_1, A_2$をそれぞれ薬の服用、非服用とし、$B_1, B_2$をそれぞれ病気が治癒する事象、治癒しない事象とする。
+        いま、$A_1(f_{1･}),A_2(f_{2･}),B_1(f_{･1}),B_2(f_{･2})$の確率はそれぞれ下記の表の通りである。</br>
+        薬の服用と病気の治癒の間に因果関係がないとした場合、下記の表の空欄($f_{11},f_{21},f_{21},f_{22}$)を埋めよ。
+      </p>
+      <div>
+        <table>
+          <tr><th>\</th><th>$B_1$</th><th>$B_2$</th><th>計</th></tr>
+          <tr><th>$A_1$</th><td><input type="number" id="A1_katu_B1" disabled></td><td><input type="number" id="A1_katu_B2" disabled></td><td><input type="number" id="A1" value="0.5"></td></tr>
+          <tr><th>$A_2$</th><td><input type="number" id="A2_katu_B1" disabled></td><td><input type="number" id="A2_katu_B2" disabled></td><td><input type="number" id="A2" value="0.5"></td></tr>
+          <tr><th>計</th><td><input type="number" id="B1" value="0.5"></td><td><input type="number" id="B2" value="0.5"></td><td><input type="number" id="ninzuu_goukei" value="1" disabled></td></tr>
+        </table>
+        <p><h4 id="alert_jouhou_tarinai"></h4><h4 id="alert_jouhou_tarinai_2"></h4></p>
+      </div>
+      <p><input type="button" value="解答" onclick="keisan_dokuritu()"></p>   
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解説</span></h4>
+      <div>
+        \[
+        \begin{align}
+        f_{1･}=f_{11}+f_{12}\\
+        f_{2･}=f_{21}+f_{22}\\
+        f_{･1}=f_{11}+f_{21}\\
+        f_{･2}=f_{12}+f_{22}\\
+        1=f_{1･}+f_{2･}\\
+        1=f_{･1}+f_{･2}\\
+        \end{align}
+        \]
+      </div>   
+      <p>薬の服用と病気の治癒の間に独立性が成立しているため、以下の式が成り立つ。</p>
+      <div>
+        \[
+        \begin{align}
+        f_{11}={f_{1･}}\times{f_{･1}}\longleftarrow{A_1}\cap{B_1}\\
+        f_{12}={f_{1･}}\times{f_{･2}}\longleftarrow{A_1}\cap{B_2}\\
+        f_{21}={f_{2･}}\times{f_{･1}}\longleftarrow{A_2}\cap{B_1}\\
+        f_{22}={f_{2･}}\times{f_{･2}}\longleftarrow{A_2}\cap{B_2}\\
+        \end{align}
+        \]
+      </div>     
+    </div>
+  </div>
+<script>
+function keisan_dokuritu(){
+  var A1=parseFloat($('#A1').val());
+  var A2=parseFloat($('#A2').val());
+  var B1=parseFloat($('#B1').val());
+  var B2=parseFloat($('#B2').val());
+  var ninzuu_goukei=parseFloat($('#ninzuu_goukei').val());
+  if(!B1||(ninzuu_goukei>=B1&&B1>=0)){
+    if(!B2||(ninzuu_goukei>=B2&&B2>=0)){
+      if(B1+B2===ninzuu_goukei){
+        $('#alert_jouhou_tarinai').html('');
+      }else if(!B1&&B2){
+        B1=new BigNumber(ninzuu_goukei).minus(B2);
+        $('#alert_jouhou_tarinai').html('');
+      }else if(B1&&!B2){
+        B2=new BigNumber(ninzuu_goukei).minus(B1);
+        $('#alert_jouhou_tarinai').html('');
+      }else{
+      $('#alert_jouhou_tarinai').html('<span class="error blinking">error：B<sub>1</sub>(f<sub>･1</sub>)とB<sub>2</sub>(f<sub>･2</sub>)</span>');
+      };
+    }else{
+      $('#alert_jouhou_tarinai').html('<span class="error blinking">error：B<sub>1</sub>(f<sub>･1</sub>)とB<sub>2</sub>(f<sub>･2</sub>)</span>');
+    };
+  }else{
+    $('#alert_jouhou_tarinai').html('<span class="error blinking">error：B<sub>1</sub>(f<sub>･1</sub>)とB<sub>2</sub>(f<sub>･2</sub>)</span>');
+  };
+  if(A1>ninzuu_goukei||0>A1){
+    $('#alert_jouhou_tarinai_2').html('<span class="error blinking">error：A<sub>1</sub>(f<sub>1･</sub>)とA<sub>2</sub>(f<sub>2･</sub>)</span>');
+  }else if(A2>ninzuu_goukei||0>A2){
+    $('#alert_jouhou_tarinai_2').html('<span class="error blinking">error：A<sub>1</sub>(f<sub>1･</sub>)とA<sub>2</sub>(f<sub>2･</sub>)</span>');
+  }else{
+    if((!A1&&!A2)||(A1&&A2&&A1+A2!==ninzuu_goukei)){
+      $('#alert_jouhou_tarinai_2').html('<span class="error blinking">error：A<sub>1</sub>(f<sub>1･</sub>)とA<sub>2</sub>(f<sub>2･</sub>)</span>');
+    }else if(A1+A2===ninzuu_goukei){
+      $('#alert_jouhou_tarinai_2').text('');;
+    }else if(A1&&!A2){
+      A2=new BigNumber(ninzuu_goukei).minus(A1);
+      $('#alert_jouhou_tarinai_2').text('');
+    }else if(!A1&&A2){
+      A1=new BigNumber(ninzuu_goukei).minus(A2);
+      $('#alert_jouhou_tarinai_2').text('');
+    }else{
+    };
+  };
+  $('#B1').val(B1);
+  $('#B2').val(B2);
+  $('#A1').val(A1);
+  $('#A2').val(A2);
+  $('#A1_katu_B1').val(new BigNumber(A1).times(B1).div(ninzuu_goukei));
+  $('#A1_katu_B2').val(new BigNumber(A1).times(B2).div(ninzuu_goukei));
+  $('#A2_katu_B1').val(new BigNumber(A2).times(B1).div(ninzuu_goukei));
+  $('#A2_katu_B2').val(new BigNumber(A2).times(B2).div(ninzuu_goukei));
+};
+</script>
+  <div id='mokujithree'>  
+    <li><span class="yellow_background">{{mokujithree}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+      <p>
+        問題2の続きである。</br>
+        薬の服用と病気の治癒が関連あるのかを調べるために
+        被験者<input type="number" value="100" id="hikensya_ninzuu">人に調査を行った。
+        下記の表の数値は実際に得られたものである。
+        カイ二乗分布による検定(イェーツの補正を用いて)を行い、有意水準($\alpha$)5%と1%で独立性を検定せよ。
+      </p>
+      <div>
+        <table>
+          <tr><th>\</th><th>$B_1$</th><th>$B_2$</th><th>計</th></tr>
+          <tr><th>$A_1$</th><td><input type="number" value="19" id="A1_katu_B1_not_dokuritu"></td><td><input type="number" value="31" id="A1_katu_B2_not_dokuritu"></td><td><input type="number" id="A1_not_dokuritu" value="50" disabled></td></tr>
+          <tr><th>$A_2$</th><td><input type="number" value="31" id="A2_katu_B1_not_dokuritu"></td><td><input type="number" value="19" id="A2_katu_B2_not_dokuritu"></td><td><input type="number" id="A2_not_dokuritu" value="50" disabled></td></tr>
+          <tr><th>計</th><td><input type="number" id="B1_not_dokuritu" value="50" disabled></td><td><input type="number" id="B2_not_dokuritu" value="50" disabled></td><td><input type="number" id="ninzuu_goukei_not_dokuritu" value="100" disabled></td></tr>
+        </table>
+      </div>
+      <p><input type="button" value="解答" onclick="keisan_kentei_dokuritu()"></p>   
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3>$\chi^2=$<span class="redunderline"><span id="kainijouchi_kaitou">カイ二乗値</span></span></h3>
+      <h4>独立性($\alpha=0.05$)：<span class="redunderline" id="dokuritusei_05_kaitou">検定結果</span></h4>
+      <h4>独立性($\alpha=0.01$)：<span class="redunderline" id="dokuritusei_01_kaitou">検定結果</span></h4>
+      <p>(小数点第四位四捨五入)</p>
+      <h4><span class="green_background">解説</span></h4> 
+      <div>
+        <div>
+        カイ二乗分布による検定を行う。
+        </div>
+        </br>
+        <div>
+        帰無仮説($H_0$)と対立仮説($H_1$)を以下のように設定する。
+        \[
+        \begin{align}
+        H_0 &: 薬の服用と病気の治癒の間に独立性が成立している。\\
+        H_1 &: 薬の服用と病気の治癒の間に独立性が成立していない。\\
+        \end{align}
+        \]
+        </div>
+        </br>
+        <div>
+        有意水準を$\alpha$とする。</br>
+        独立性の検定では片側検定を行うため、${\chi_{\frac{\alpha}{2}}}^2$ではなく、${\chi_{\alpha}}^2$を用いる。</br>
+        今回は自由度は${(2-1)}\times{(2-1)}=1$である。
+        \[
+        \begin{align}
+        {\chi_{0.05}}^2(1)=&3.84146\\
+        {\chi_{0.01}}^2(1)=&6.63490\\
+        \end{align}
+        \]
+        </div>
+        </br>
+        <div>
+        2行$\times$2列のクロス集計表のデータでは、
+        イェーツの補正を用いてカイ二乗値を以下のように近似する。
+        \[
+        \begin{align}
+        \chi^2=\frac{n(|f_{11}f_{22}-f_{21}f_{12}|-\frac{n}{2})^2}{(f_{11}+f_{21})(f_{12}+f_{22})(f_{11}+f_{12})(f_{21}+f_{22})}
+        \end{align}
+        \]
+        <p>$\chi^2=$<span class="redunderline" id="kainijouchi">カイ二乗値</span></p>
+        <p>$\alpha=0.05$の時の棄却域：$\chi^2>{\chi_{0.05}}^2(1)=3.84146$</p>
+        <p>$\alpha=0.01$の時の棄却域：$\chi^2>{\chi_{0.01}}^2(1)=6.63490$</p>
+        <p>独立性($\alpha=0.05$)：<span class="redunderline" id="dokuritusei_05_betunobasyo">検定結果</span></p>
+        <p>独立性($\alpha=0.01$)：<span class="redunderline" id="dokuritusei_01_betunobasyo">検定結果</span></p>
+        </div>
+      </div>     
+    </div>
+  </div>
+<script>
+//表の周辺確率を連動させる
+$('input').focusout(function(){
+  hikensya_ninzuu=$('#hikensya_ninzuu').val();
+  $('#A1_not_dokuritu').val(BN($('#A1').val()).times(hikensya_ninzuu));
+  $('#A2_not_dokuritu').val(BN($('#A2').val()).times(hikensya_ninzuu));
+  $('#B1_not_dokuritu').val(BN($('#B1').val()).times(hikensya_ninzuu));
+  $('#B2_not_dokuritu').val(BN($('#B2').val()).times(hikensya_ninzuu));
+  $('#ninzuu_goukei_not_dokuritu').val(hikensya_ninzuu);
+});
+</script>
+<script>
+function keisan_kentei_dokuritu(){
+  var A1_katu_B1_not_dokuritu=parseFloat($('#A1_katu_B1_not_dokuritu').val());
+  var A1_katu_B2_not_dokuritu=parseFloat($('#A1_katu_B2_not_dokuritu').val());
+  var A2_katu_B1_not_dokuritu=parseFloat($('#A2_katu_B1_not_dokuritu').val());
+  var A2_katu_B2_not_dokuritu=parseFloat($('#A2_katu_B2_not_dokuritu').val());
+  var A1_not_dokuritu=parseFloat($('#A1_not_dokuritu').val());
+  var A2_not_dokuritu=parseFloat($('#A2_not_dokuritu').val());
+  var B1_not_dokuritu=parseFloat($('#B1_not_dokuritu').val());
+  var B2_not_dokuritu=parseFloat($('#B2_not_dokuritu').val());
+  if(A1_katu_B1_not_dokuritu){
+    A1_katu_B2_not_dokuritu=parseFloat(BN(A1_not_dokuritu).minus(A1_katu_B1_not_dokuritu));
+    $('#A1_katu_B2_not_dokuritu').val(A1_katu_B2_not_dokuritu);
+    A2_katu_B1_not_dokuritu=parseFloat(BN(B1_not_dokuritu).minus(A1_katu_B1_not_dokuritu));
+    $('#A2_katu_B1_not_dokuritu').val(A2_katu_B1_not_dokuritu);
+    A2_katu_B2_not_dokuritu=parseFloat(BN(A2_not_dokuritu).minus(A2_katu_B1_not_dokuritu));
+    $('#A2_katu_B2_not_dokuritu').val(A2_katu_B2_not_dokuritu);
+  }else if(A1_katu_B2_not_dokuritu){
+    A1_katu_B1_not_dokuritu=parseFloat(BN(A1_not_dokuritu).minus(A1_katu_B2_not_dokuritu));
+    $('#A1_katu_B1_not_dokuritu').val(A1_katu_B1_not_dokuritu);
+    A2_katu_B1_not_dokuritu=parseFloat(BN(B1_not_dokuritu).minus(A1_katu_B1_not_dokuritu));
+    $('#A2_katu_B1_not_dokuritu').val(A2_katu_B1_not_dokuritu);
+    A2_katu_B2_not_dokuritu=parseFloat(BN(A2_not_dokuritu).minus(A2_katu_B1_not_dokuritu));
+    $('#A2_katu_B2_not_dokuritu').val(A2_katu_B2_not_dokuritu);
+  }else if(A2_katu_B1_not_dokuritu){
+    A1_katu_B1_not_dokuritu=parseFloat(BN(B1_not_dokuritu).minus(A2_katu_B1_not_dokuritu));
+    $('#A1_katu_B1_not_dokuritu').val(A1_katu_B1_not_dokuritu);
+    A1_katu_B2_not_dokuritu=parseFloat(BN(A1_not_dokuritu).minus(A1_katu_B1_not_dokuritu));
+    $('#A1_katu_B2_not_dokuritu').val(A1_katu_B2_not_dokuritu);
+    A2_katu_B2_not_dokuritu=parseFloat(BN(A2_not_dokuritu).minus(A2_katu_B1_not_dokuritu));
+    $('#A2_katu_B2_not_dokuritu').val(A2_katu_B2_not_dokuritu);
+  }else if(A2_katu_B2_not_dokuritu){
+    A1_katu_B2_not_dokuritu=parseFloat(BN(B2_not_dokuritu).minus(A2_katu_B2_not_dokuritu));
+    $('#A1_katu_B2_not_dokuritu').val(A1_katu_B2_not_dokuritu);
+    A2_katu_B1_not_dokuritu=parseFloat(BN(A2_not_dokuritu).minus(A2_katu_B2_not_dokuritu));
+    $('#A2_katu_B1_not_dokuritu').val(A2_katu_B1_not_dokuritu);
+    A1_katu_B1_not_dokuritu=parseFloat(BN(A1_not_dokuritu).minus(A1_katu_B2_not_dokuritu));
+    $('#A1_katu_B1_not_dokuritu').val(A1_katu_B1_not_dokuritu);
+  };
+  var ninzuu_goukei_not_dokuritu=parseFloat($('#ninzuu_goukei_not_dokuritu').val());
+  kainijouchi=ninzuu_goukei_not_dokuritu*Math.pow((Math.abs((A1_katu_B1_not_dokuritu*A2_katu_B2_not_dokuritu)-(A2_katu_B1_not_dokuritu*A1_katu_B2_not_dokuritu))-(ninzuu_goukei_not_dokuritu/2)),2)/((A1_katu_B1_not_dokuritu+A2_katu_B1_not_dokuritu)*(A1_katu_B2_not_dokuritu+A2_katu_B2_not_dokuritu)*(A1_katu_B1_not_dokuritu+A1_katu_B2_not_dokuritu)*(A2_katu_B1_not_dokuritu+A2_katu_B2_not_dokuritu));
+  $('#kainijouchi').text(kainijouchi);
+  $('#kainijouchi_kaitou').text((Math.round(kainijouchi*1000)/1000).toFixed(3));
+  if(kainijouchi>3.84146){
+    $('#dokuritusei_05_betunobasyo').text('棄却された(有意である)ので、独立ではない。');
+    $('#dokuritusei_05_kaitou').text('棄却された(有意である)ので、独立ではない。');
+  }else{
+    $('#dokuritusei_05_betunobasyo').text('受容された(有意でない)ので、独立である。');
+    $('#dokuritusei_05_kaitou').text('受容された(有意でない)ので、独立である。');
+  };
+  if(kainijouchi>6.63490){
+    $('#dokuritusei_01_betunobasyo').text('棄却された(有意である)ので、独立ではない。');
+    $('#dokuritusei_01_kaitou').text('棄却された(有意である)ので、独立ではない。');
+  }else{
+    $('#dokuritusei_01_betunobasyo').text('受容された(有意でない)ので、独立である。');
+    $('#dokuritusei_01_kaitou').text('受容された(有意でない)ので、独立である。');
+  };
+};
+</script>
+<!---
+    <li>{{mokujifour}}</li>
+    <li>{{mokujifive}}</li>
+    <li>{{mokujisix}}</li>
+    <li>{{mokujiseven}}</li>
+    <li>{{mokujieight}}</li>
+    <li>{{mokujinine}}</li>
+    <li>{{mokujiten}}</li>
+    <li>{{mokujieleven}}</li>
+    <li>{{mokujitwelve}}</li>
+-->
+  </ol>
+{% endblock %}

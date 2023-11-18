@@ -1,0 +1,324 @@
+{% extends 'app/base.html' %}
+{% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/sonota.css' %}">
+
+<ol id="ol">
+  <div id='mokujione'>  
+    <li><span class="yellow_background">{{mokujione}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+      <p>
+        ルーレットX、ルーレットYは、0,&nbsp;1,&nbsp;2点がそれぞれある確率で出るようになっている。
+        その確率は下の表の周辺確率($p_X(x_i), p_Y(y_j)$)に書いてある。
+        $X,~Y$が互いに独立している(ルーレットX、ルーレットYは互いに影響を及ぼさない)として、ルーレットX、ルーレットYを同時に回した時の同時確率($p_{X,Y}(x_i,y_j)$)を求めよ。
+        また、$X,~Y$の平均と分散を求めよ。
+      </p>
+      <div>
+        <table>
+          <tr><th>X\Y</th><th><input type="number" value="0" id="table_Y_1"></th><th><input type="number" value="1" id="table_Y_2"></th><th><input type="number" value="2" id="table_Y_3"></th><th>計</th></tr>
+          <tr><th><input type="number" value="0" id="table_X_1"></th><td><input type="number" value="0.15" id="table_1_1" disabled></td><td><input type="number" value="0.06" id="table_1_2" disabled></td><td><input type="number" value="0.09" id="table_1_3" disabled></td><td><input type="number" value="0.3" id="table_1_na"></td></tr>
+          <tr><th><input type="number" value="1" id="table_X_2"></th><td><input type="number" value="0.3" id="table_2_1" disabled></td><td><input type="number" value="0.12" id="table_2_2" disabled></td><td><input type="number" value="0.18" id="table_2_3" disabled></td><td><input type="number" value="0.6" id="table_2_na"></td></tr>
+          <tr><th><input type="number" value="2" id="table_X_3"></th><td><input type="number" value="0.05" id="table_3_1" disabled></td><td><input type="number" value="0.02" id="table_3_2" disabled></td><td><input type="number" value="0.03" id="table_3_3" disabled></td><td><input type="number" value="0.1" id="table_3_na"></td></tr>
+          <tr><th>計</th><td><input type="number" value="0.5" id="table_na_1"></td><td><input type="number" value="0.2" id="table_na_2"></td><td><input type="number" value="0.3" id="table_na_3"></td><td>1</td></tr>
+        </table>
+      </div>
+      <div>
+        <p><input type="button" value="解答" onclick="keisan_heikin_bunsan()"></p>
+      </div>
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3>E[X]：<span class="redunderline"><span id="kaitou_heikin_X">???</span></span></h3>
+      <h3>Var(X)：<span class="redunderline"><span id="kaitou_bunsan_X">???</span></span></h3>
+      <h3>E[Y]：<span class="redunderline"><span id="kaitou_heikin_Y">???</span></span></h3>
+      <h3>Var(Y)：<span class="redunderline"><span id="kaitou_bunsan_Y">???</span></span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <p></p>
+      <h4><span class="green_background">解説</span></h4>
+      <p></p>
+      <div>
+        \[
+        p_X(x_1)+p_X(x_2)+p_X(x_3)=1\\
+        p_Y(y_1)+p_Y(y_2)+p_Y(y_3)=1\\
+        \]
+        \[
+        E[X]=\mu_x={x_1}\times{p_X(x_1)}+{x_2}\times{p_X(x_2)}+{x_3}\times{p_X(x_3)}\\
+        Var(X)={({x_1}-\mu_x)^2}\times{p_X(x_1)}+{({x_2}-\mu_x)^2}\times{p_X(x_2)}+{({x_3}-\mu_x)^3}\times{p_X(x_3)}\\
+        E[Y]=\mu_y={y_1}\times{p_Y(y_1)}+{y_2}\times{p_Y(y_2)}+{y_3}\times{p_Y(y_3)}\\
+        Var(Y)={({y_1}-\mu_y)^2}\times{p_Y(y_1)}+{({y_2}-\mu_y)^2}\times{p_Y(y_2)}+{({y_3}-\mu_y)^3}\times{p_Y(y_3)}
+        \]
+        <p>$E[X]=\mu_x=$<span id="kaitou_heikin_X_sonomama" class="redunderline">ここに答え</span></p>
+        <p>$Var(x)=$<span id="kaitou_bunsan_X_sonomama" class="redunderline">ここに答え</span></p>
+        <p>$E[Y]=\mu_y=$<span id="kaitou_heikin_Y_sonomama" class="redunderline">ここに答え</span></p>
+        <p>$Var(Y)=$<span id="kaitou_bunsan_Y_sonomama" class="redunderline">ここに答え</span></p>
+      </div>     
+    </div>
+  </div>
+<script>
+function keisan_heikin_bunsan(){
+//平均と分散を求める。
+  var table_Y_1=$('#table_Y_1').val();
+  var table_Y_2=$('#table_Y_2').val();
+  var table_Y_3=$('#table_Y_3').val();
+  var table_X_1=$('#table_X_1').val();
+  var table_X_2=$('#table_X_2').val();
+  var table_X_3=$('#table_X_3').val();
+  var table_na_1=$('#table_na_1').val();
+  var table_na_2=$('#table_na_2').val();
+  var table_na_3=$('#table_na_3').val();
+  var table_1_na=$('#table_1_na').val();
+  var table_2_na=$('#table_2_na').val();
+  var table_3_na=$('#table_3_na').val();
+  heikin_X=(table_X_1*table_1_na)+(table_X_2*table_2_na)+(table_X_3*table_3_na);
+  heikin_Y=(table_Y_1*table_na_1)+(table_Y_2*table_na_2)+(table_Y_3*table_na_3);
+  var_X=(Math.pow(table_X_1-heikin_X,2)*table_1_na)+(Math.pow(table_X_2-heikin_X,2)*table_2_na)+(Math.pow(table_X_3-heikin_X,2)*table_3_na);
+  var_Y=(Math.pow(table_Y_1-heikin_Y,2)*table_na_1)+(Math.pow(table_Y_2-heikin_Y,2)*table_na_2)+(Math.pow(table_Y_3-heikin_Y,2)*table_na_3);
+  $('#kaitou_heikin_X_sonomama').text(heikin_X);
+  $('#kaitou_bunsan_X_sonomama').text(var_X);
+  $('#kaitou_heikin_Y_sonomama').text(heikin_Y);
+  $('#kaitou_bunsan_Y_sonomama').text(var_Y);
+  $('#kaitou_heikin_X').text((Math.round(heikin_X*1000)/1000).toFixed(3));
+  $('#kaitou_bunsan_X').text((Math.round(var_X*1000)/1000).toFixed(3));
+  $('#kaitou_heikin_Y').text((Math.round(heikin_Y*1000)/1000).toFixed(3));
+  $('#kaitou_bunsan_Y').text((Math.round(var_Y*1000)/1000).toFixed(3));
+  return {heikin_X:heikin_X,heikin_Y:heikin_Y,var_X:var_X,var_Y:var_Y};
+};
+</script>
+<script>
+//focusout------------------------------------------------------------
+$('input').focusout(function(){
+//同時確率を計算
+  var table_na_1=$('#table_na_1').val();
+  var table_na_2=$('#table_na_2').val();
+  var table_na_3=$('#table_na_3').val();
+  var table_1_na=$('#table_1_na').val();
+  var table_2_na=$('#table_2_na').val();
+  var table_3_na=$('#table_3_na').val();
+  $('#table_1_1').val(BN(table_1_na).times(table_na_1));
+  $('#table_1_2').val(BN(table_1_na).times(table_na_2));
+  $('#table_1_3').val(BN(table_1_na).times(table_na_3));
+  $('#table_2_1').val(BN(table_2_na).times(table_na_1));
+  $('#table_2_2').val(BN(table_2_na).times(table_na_2));
+  $('#table_2_3').val(BN(table_2_na).times(table_na_3));
+  $('#table_3_1').val(BN(table_3_na).times(table_na_1));
+  $('#table_3_2').val(BN(table_3_na).times(table_na_2));
+  $('#table_3_3').val(BN(table_3_na).times(table_na_3));
+});
+</script>
+  <div id='mokujitwo'>  
+    <li><span class="yellow_background">{{mokujitwo}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+      <p>
+        問題1と同じルーレットX,Yを同じ机の上で同時に回して、二次元の確率変数$(X,Y)$の同時確率を確かめた。
+        この二つは独立しているか調べろ。独立していない場合、共分散($Cov(X,Y)$)と相関係数($Corr(X,Y)$)を求めよ。
+      </p>
+      <div>
+        <table>
+          <tr><th>X\Y</th><th><input type="number" value="0" id="table_Y_1_for_cov" disabled></th><th><input type="number" value="1" id="table_Y_2_for_cov" disabled></th><th><input type="number" value="2" id="table_Y_3_for_cov" disabled></th><th>計</th></tr>
+          <tr><th><input type="number" value="0" id="table_X_1_for_cov" disabled></th><td><input type="number" value="0.15" id="table_1_1_for_cov"></td><td><input type="number" value="0.06" id="table_1_2_for_cov"></td><td><input type="number" value="0.09" id="table_1_3_for_cov"></td><td><input type="number" value="0.3" id="table_1_na_for_cov" disabled></td></tr>
+          <tr><th><input type="number" value="1" id="table_X_2_for_cov" disabled></th><td><input type="number" value="0.3" id="table_2_1_for_cov"></td><td><input type="number" value="0.12" id="table_2_2_for_cov"></td><td><input type="number" value="0.18" id="table_2_3_for_cov"></td><td><input type="number" value="0.6" id="table_2_na_for_cov" disabled></td></tr>
+          <tr><th><input type="number" value="2" id="table_X_3_for_cov" disabled></th><td><input type="number" value="0.05" id="table_3_1_for_cov"></td><td><input type="number" value="0.02" id="table_3_2_for_cov"></td><td><input type="number" value="0.03" id="table_3_3_for_cov"></td><td><input type="number" value="0.1" id="table_3_na_for_cov" disabled></td></tr>
+          <tr><th>計</th><td><input type="number" value="0.5" id="table_na_1_for_cov" disabled></td><td><input type="number" value="0.2" id="table_na_2_for_cov" disabled></td><td><input type="number" value="0.3" id="table_na_3_for_cov" disabled></td><td>1</td></tr>
+        </table>
+      </div>
+      <div>
+        <p><input type="button" value="解答" onclick="keisan_cov()"></p>
+      </div>
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3>$Cov(X,Y)$：<span class="redunderline"><span id="kaitou_cov">???</span></span></h3>
+      <h3>$Corr(X,Y)$：<span class="redunderline"><span id="kaitou_corr">???</span></span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <p></p>
+      <h4><span class="green_background">解説</span></h4>
+      <p></p>
+      <div>
+        全ての$p_X(x_i),p_Y(y_j)$に対して$p_{X,Y}(x_i,y_j)={p_X(x_i)}\times{p_Y(y_j)}$
+        が成立するとき、二つの確率変数($X,Y$)が独立であると言う。
+        <p>$(X,Y)$は独立か？：<span id="dokuritu_hantei" class="redunderline">ここに答え</span></p>
+        ($X,Y$)が独立でない時、それらの関係をとらえるのに共分散($Cov(X,Y)$)と相関係数($Corr(X,Y)$)が役に立つ。</br>
+        \[
+        \sigma_{XY}=Cov(X,Y)=E[(X-\mu_X)(Y-\mu_Y)]\\
+        \rho_{XY}=Corr(X,Y)=\frac{Cov(X,Y)}{\sqrt{Var(X)Var(Y)}}=\frac{\sigma_{XY}}{\sigma_{X}\sigma_{Y}}
+        \]
+        <p>$Cov(X,Y)=$<span id="kaitou_cov_sonomama" class="redunderline">ここに答え</span></p>
+        <p>$Corr(X,Y)=$<span id="kaitou_corr_sonomama" class="redunderline">ここに答え</span></p>
+      </div>     
+    </div>
+  </div>
+<script>
+//focuout-----------------------------------------------------
+$('input').focusout(function(){
+//問題1と2の周辺確率を連動。
+  $('#table_1_na_for_cov').val($('#table_1_na').val());
+  $('#table_2_na_for_cov').val($('#table_2_na').val());
+  $('#table_3_na_for_cov').val($('#table_3_na').val());
+  $('#table_na_1_for_cov').val($('#table_na_1').val());
+  $('#table_na_2_for_cov').val($('#table_na_2').val());
+  $('#table_na_3_for_cov').val($('#table_na_3').val());
+//問題1と2の実現値を連動。
+  $('#table_X_1_for_cov').val($('#table_X_1').val());
+  $('#table_X_2_for_cov').val($('#table_X_2').val());
+  $('#table_X_3_for_cov').val($('#table_X_3').val());
+  $('#table_Y_1_for_cov').val($('#table_Y_1').val());
+  $('#table_Y_2_for_cov').val($('#table_Y_2').val());
+  $('#table_Y_3_for_cov').val($('#table_Y_3').val());
+});
+</script>
+<script>
+function keisan_cov(){
+  var obj=keisan_heikin_bunsan();
+  var table_1_na_for_cov=$('#table_1_na_for_cov').val();
+  var table_2_na_for_cov=$('#table_2_na_for_cov').val();
+  var table_3_na_for_cov=$('#table_3_na_for_cov').val();
+  var table_na_1_for_cov=$('#table_na_1_for_cov').val();
+  var table_na_2_for_cov=$('#table_na_2_for_cov').val();
+  var table_na_3_for_cov=$('#table_na_3_for_cov').val();
+  var table_1_1_for_cov=$('#table_1_1_for_cov').val();
+  var table_1_2_for_cov=$('#table_1_2_for_cov').val();
+  var table_1_3_for_cov=$('#table_1_3_for_cov').val();
+  var table_2_1_for_cov=$('#table_2_1_for_cov').val();
+  var table_2_2_for_cov=$('#table_2_2_for_cov').val();
+  var table_2_3_for_cov=$('#table_2_3_for_cov').val();
+  var table_3_1_for_cov=$('#table_3_1_for_cov').val();
+  var table_3_2_for_cov=$('#table_3_2_for_cov').val();
+  var table_3_3_for_cov=$('#table_3_3_for_cov').val();
+  var table_X_1_for_cov=$('#table_X_1_for_cov').val();
+  var table_X_2_for_cov=$('#table_X_2_for_cov').val();
+  var table_X_3_for_cov=$('#table_X_3_for_cov').val();
+  var table_Y_1_for_cov=$('#table_Y_1_for_cov').val();
+  var table_Y_2_for_cov=$('#table_Y_2_for_cov').val();
+  var table_Y_3_for_cov=$('#table_Y_3_for_cov').val();
+//独立の判定
+  if(table_1_1_for_cov==new BigNumber(table_1_na_for_cov).times(table_na_1_for_cov)&&table_1_2_for_cov==new BigNumber(table_1_na_for_cov).times(table_na_2_for_cov)&&table_1_3_for_cov==new BigNumber(table_1_na_for_cov).times(table_na_3_for_cov)&&
+     table_2_1_for_cov==new BigNumber(table_2_na_for_cov).times(table_na_1_for_cov)&&table_2_2_for_cov==new BigNumber(table_2_na_for_cov).times(table_na_2_for_cov)&&table_2_3_for_cov==new BigNumber(table_2_na_for_cov).times(table_na_3_for_cov)&&
+     table_3_1_for_cov==new BigNumber(table_3_na_for_cov).times(table_na_1_for_cov)&&table_3_2_for_cov==new BigNumber(table_3_na_for_cov).times(table_na_2_for_cov)&table_3_3_for_cov==new BigNumber(table_3_na_for_cov).times(table_na_3_for_cov)){
+    $('#dokuritu_hantei').text('二変数(X,Y)は独立である');
+  }else{
+    $('#dokuritu_hantei').text('二変数(X,Y)は独立でない');
+  };
+//Cov,Corr
+  var cov=0;
+  var corr=0;
+  cov=(BN(table_1_1_for_cov).times(BN(table_X_1_for_cov).minus(obj.heikin_X)).times(BN(table_Y_1_for_cov).minus(obj.heikin_Y))).plus(BN(table_1_2_for_cov).times(BN(table_X_1_for_cov).minus(obj.heikin_X)).times(BN(table_Y_2_for_cov).minus(obj.heikin_Y))).plus(BN(table_1_3_for_cov).times(BN(table_X_1_for_cov).minus(obj.heikin_X)).times(BN(table_Y_3_for_cov).minus(obj.heikin_Y))).plus
+      (BN(table_2_1_for_cov).times(BN(table_X_2_for_cov).minus(obj.heikin_X)).times(BN(table_Y_1_for_cov).minus(obj.heikin_Y))).plus(BN(table_2_2_for_cov).times(BN(table_X_2_for_cov).minus(obj.heikin_X)).times(BN(table_Y_2_for_cov).minus(obj.heikin_Y))).plus(BN(table_2_3_for_cov).times(BN(table_X_2_for_cov).minus(obj.heikin_X)).times(BN(table_Y_3_for_cov).minus(obj.heikin_Y))).plus
+      (BN(table_3_1_for_cov).times(BN(table_X_3_for_cov).minus(obj.heikin_X)).times(BN(table_Y_1_for_cov).minus(obj.heikin_Y))).plus(BN(table_3_2_for_cov).times(BN(table_X_3_for_cov).minus(obj.heikin_X)).times(BN(table_Y_2_for_cov).minus(obj.heikin_Y))).plus(BN(table_3_3_for_cov).times(BN(table_X_3_for_cov).minus(obj.heikin_X)).times(BN(table_Y_3_for_cov).minus(obj.heikin_Y)));
+  corr=cov.div(BN(obj.var_X).times(obj.var_Y).sqrt());
+  $('#kaitou_cov_sonomama').text(cov);
+  $('#kaitou_corr_sonomama').text(corr);
+  $('#kaitou_cov').text(cov.dp(3,BigNumber.ROUND_HALF_EVEN).toFixed(3));
+  $('#kaitou_corr').text(cov.dp(3,BigNumber.ROUND_HALF_EVEN).toFixed(3));
+};
+</script>
+  <div id='mokujithree'>  
+    <li><span class="yellow_background">{{mokujithree}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+      <p>
+        問題1のルーレットX、ルーレットYを同じ机の上で<input type="number" value="100" id="sikoukaisuu_bunsyouchuu">回同時に回した時、下の表のようになった。
+        $(X,Y)$が互いに独立しているかどうかをカイ二乗検定を用いて検定せよ。
+      </p>
+      <div>
+        <table>
+          <tr><th>X\Y</th><th><input type="number" value="0" id="table_Y_1_not_dokuritu" disabled></th><th><input type="number" value="1" id="table_Y_2_not_dokuritu" disabled></th><th><input type="number" value="2" id="table_Y_3_not_dokuritu" disabled></th><th>計</th></tr>
+          <tr><th><input type="number" value="0" id="table_X_1_not_dokuritu" disabled></th><td><input type="number" value="18" id="table_1_1_not_dokuritu"></td><td><input type="number" value="2" id="table_1_2_not_dokuritu"></td><td><input type="number" value="8" id="table_1_3_not_dokuritu"></td><td><input type="number" value="28" id="table_1_na_not_dokuritu"></td></tr>
+          <tr><th><input type="number" value="1" id="table_X_2_not_dokuritu" disabled></th><td><input type="number" value="24" id="table_2_1_not_dokuritu" ></td><td><input type="number" value="20" id="table_2_2_not_dokuritu"></td><td><input type="number" value="17" id="table_2_3_not_dokuritu"></td><td><input type="number" value="61" id="table_2_na_not_dokuritu"></td></tr>
+          <tr><th><input type="number" value="2" id="table_X_3_not_dokuritu" disabled></th><td><input type="number" value="7" id="table_3_1_not_dokuritu"></td><td><input type="number" value="1" id="table_3_2_not_dokuritu"></td><td><input type="number" value="3" id="table_3_3_not_dokuritu"></td><td><input type="number" value="11" id="table_3_na_not_dokuritu"></td></tr>
+          <tr><th>計</th><td><input type="number" value="49" id="table_na_1_not_dokuritu"></td><td><input type="number" value="23" id="table_na_2_not_dokuritu"></td><td><input type="number" value="28" id="table_na_3_not_dokuritu" ></td><td><input type="number" value="100" id="sikoukaisuu" disabled></td></tr>
+        </table>
+      </div>
+      <div>
+        <p><input type="button" value="解答" onclick="keisan_kaijijou()"></p>
+      </div>
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3>有意水準5%：<span class="redunderline"><span id="hantei_5">???</span></span></h3>
+      <h3>有意水準1%：<span class="redunderline"><span id="hantei_1">???</span></span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <p></p>
+      <h4><span class="green_background">解説</span></h4>
+      <div>
+        帰無仮説$H_0$：$X,Y$は独立である</br>
+        対立仮説$H_1$：$X,Y$は独立でない</br></br>
+        ${m}\times{n}$($m$行$n$列)のクロス集計表の自由度は${m-1}\times{n-1}$である。
+        今回の自由度は$(3-1)\times(3-1)=4$である。
+        \[
+        {\chi_{0.05}}^2(4)=9.488\\
+        {\chi_{0.01}}^2(4)=13.277
+        \]
+        $f_{i,j}$を実測値、$g_{i,j}$を独立していると仮定した時の理論値とする。$N$は試行回数とする。
+        \[
+        g_{i,j}=\frac{f_{i,･}\times{f_{･,j}}}{N}\\
+        \chi^2=\sum_{j=1}^{n}\sum_{i=1}^{m}\frac{(f_{i,j}-g_{i,j})^2}{g_{i,j}}\\
+        \]
+        \[
+        {\chi_{0.05}}^2(4)=9.488{<}\chi^2\longrightarrow有意水準5％で帰無仮説は棄却される(X,Yは独立でない)\\
+        {\chi_{0.01}}^2(4)=13.277{<}\chi^2\longrightarrow有意水準1％で帰無仮説は棄却される(X,Yは独立でない)
+        \]
+      <p>$\chi^2=$<span class="redunderline" id="kaijijou_sonomama">ここに答え</span></p>     
+      </div>
+    </div>
+  </div>
+<script>
+function keisan_kaijijou(){
+//カイ二乗を計算
+  var table_na_1_not_dokuritu=parseFloat($('#table_na_1_not_dokuritu').val());
+  var table_na_2_not_dokuritu=parseFloat($('#table_na_2_not_dokuritu').val());
+  var table_na_3_not_dokuritu=parseFloat($('#table_na_3_not_dokuritu').val());
+  var table_1_na_not_dokuritu=parseFloat($('#table_1_na_not_dokuritu').val());
+  var table_2_na_not_dokuritu=parseFloat($('#table_2_na_not_dokuritu').val());
+  var table_3_na_not_dokuritu=parseFloat($('#table_3_na_not_dokuritu').val());
+  var table_1_1_not_dokuritu=parseFloat($('#table_1_1_not_dokuritu').val());
+  var table_1_2_not_dokuritu=parseFloat($('#table_1_2_not_dokuritu').val());
+  var table_1_3_not_dokuritu=parseFloat($('#table_1_3_not_dokuritu').val());
+  var table_2_1_not_dokuritu=parseFloat($('#table_2_1_not_dokuritu').val());
+  var table_2_2_not_dokuritu=parseFloat($('#table_2_2_not_dokuritu').val());
+  var table_2_3_not_dokuritu=parseFloat($('#table_2_3_not_dokuritu').val());
+  var table_3_1_not_dokuritu=parseFloat($('#table_3_1_not_dokuritu').val());
+  var table_3_2_not_dokuritu=parseFloat($('#table_3_2_not_dokuritu').val());
+  var table_3_3_not_dokuritu=parseFloat($('#table_3_3_not_dokuritu').val());
+  var sikoukaisuu=$('#sikoukaisuu').val();
+  var kaijijou=0;
+  kaijijou=(BN(table_1_1_not_dokuritu).minus(BN(table_1_na_not_dokuritu).times(table_na_1_not_dokuritu).div(sikoukaisuu)).pow(2).div(BN(table_1_na_not_dokuritu).times(table_na_1_not_dokuritu).div(sikoukaisuu))).plus
+           (BN(table_1_2_not_dokuritu).minus(BN(table_1_na_not_dokuritu).times(table_na_2_not_dokuritu).div(sikoukaisuu)).pow(2).div(BN(table_1_na_not_dokuritu).times(table_na_2_not_dokuritu).div(sikoukaisuu))).plus
+           (BN(table_1_3_not_dokuritu).minus(BN(table_1_na_not_dokuritu).times(table_na_3_not_dokuritu).div(sikoukaisuu)).pow(2).div(BN(table_1_na_not_dokuritu).times(table_na_3_not_dokuritu).div(sikoukaisuu))).plus
+           (BN(table_2_1_not_dokuritu).minus(BN(table_2_na_not_dokuritu).times(table_na_1_not_dokuritu).div(sikoukaisuu)).pow(2).div(BN(table_2_na_not_dokuritu).times(table_na_1_not_dokuritu).div(sikoukaisuu))).plus
+           (BN(table_2_2_not_dokuritu).minus(BN(table_2_na_not_dokuritu).times(table_na_2_not_dokuritu).div(sikoukaisuu)).pow(2).div(BN(table_2_na_not_dokuritu).times(table_na_2_not_dokuritu).div(sikoukaisuu))).plus
+           (BN(table_2_3_not_dokuritu).minus(BN(table_2_na_not_dokuritu).times(table_na_3_not_dokuritu).div(sikoukaisuu)).pow(2).div(BN(table_2_na_not_dokuritu).times(table_na_3_not_dokuritu).div(sikoukaisuu))).plus
+           (BN(table_3_1_not_dokuritu).minus(BN(table_3_na_not_dokuritu).times(table_na_1_not_dokuritu).div(sikoukaisuu)).pow(2).div(BN(table_3_na_not_dokuritu).times(table_na_1_not_dokuritu).div(sikoukaisuu))).plus
+           (BN(table_3_2_not_dokuritu).minus(BN(table_3_na_not_dokuritu).times(table_na_2_not_dokuritu).div(sikoukaisuu)).pow(2).div(BN(table_3_na_not_dokuritu).times(table_na_2_not_dokuritu).div(sikoukaisuu))).plus
+           (BN(table_3_3_not_dokuritu).minus(BN(table_3_na_not_dokuritu).times(table_na_3_not_dokuritu).div(sikoukaisuu)).pow(2).div(BN(table_3_na_not_dokuritu).times(table_na_3_not_dokuritu).div(sikoukaisuu)));
+  $('#kaijijou_sonomama').text(kaijijou);
+  if(kaijijou>9.488){
+    $('#hantei_5').text('X,Yは独立でない(帰無仮説は棄却される)');
+  }else{$('#hantei_5').text('X,Yは独立である(帰無仮説は受容される)');};
+  if(kaijijou>13.277){
+    $('#hantei_1').text('X,Yは独立でない(帰無仮説は棄却される)');
+  }else{$('#hantei_1').text('X,Yは独立である(帰無仮説は受容される)');};
+};
+</script>
+<script>
+//focusout----------------------------------------------------------
+$('input').focusout(function(){
+//問題2について表中の試行回数を文章中の試行回数と連動。
+  $('#sikoukaisuu').val($('#sikoukaisuu_bunsyouchuu').val());
+});
+</script>
+<!--
+    <li>{{mokujifour}}</li>
+    <li>{{mokujifive}}</li>
+    <li>{{mokujisix}}</li>
+    <li>{{mokujiseven}}</li>
+    <li>{{mokujieight}}</li>
+    <li>{{mokujinine}}</li>
+    <li>{{mokujiten}}</li>
+    <li>{{mokujieleven}}</li>
+    <li>{{mokujitwelve}}</li>
+-->
+  </ol>
+{% endblock %}

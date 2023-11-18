@@ -1,0 +1,148 @@
+{% extends 'app/base.html' %}
+{% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/sonota.css' %}">
+
+<ol id="ol">
+  <div id='mokujione'>  
+    <li><span class="yellow_background">{{mokujione}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+        <p>
+          ある殺虫剤を使うと虫は<input type="number" value="8" id="musi_sibou_kakuritu">割の確率で死ぬことが分かっている。いま<input type="number" value="10" id="musi_kazu">匹
+          の虫にこの殺虫剤を使うと$x$匹死亡するとする。$x\geqq$<input type="number" value="8" id="musi_sibou_ijou">となる確率を求めよ。
+        </p>
+        <p><input type="button" value="解答" onclick="keisan_nikoubunpu()"></p>    　
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3><span class="redunderline"><span id="kaitou_nikoubunpu">???</span>%</span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <h4><span class="green_background">解説</span></h4>
+      <div>
+        \[
+        \begin{align}
+        p(x)=P(X=x)={}_n\mathrm{C}_xp^x(1-p)^{n-x},~~x=0,1,2,...,n
+        \end{align}
+        \]
+        <p>$P(X\geqq$<input id="musi_sibou_ijou_rendou" value="8" type="number" disabled>$)=$<span id="kaitou_nikoubunpu_sonomama" class="redunderline">ここに答え</span></p>
+      </div>     
+    </div>
+  </div>
+<script>
+function keisan_nikoubunpu(){
+  var musi_kazu=parseFloat($('#musi_kazu').val());
+  var musi_sibou_ijou=parseFloat($('#musi_sibou_ijou').val());
+  var musi_sibou_kakuritu=parseFloat($('#musi_sibou_kakuritu').val())/10;
+  $('#musi_sibou_ijou_rendou').val(musi_sibou_ijou);
+  var result=0;
+  for(var i=musi_kazu; i>musi_sibou_ijou-1; i--){
+    result+=math.combinations(musi_kazu,i)*Math.pow(musi_sibou_kakuritu,i)*Math.pow(1-musi_sibou_kakuritu,musi_kazu-i);
+  };
+  $('#kaitou_nikoubunpu_sonomama').text(result);
+  $('#kaitou_nikoubunpu').text((Math.round(result*100000)/100000*100).toFixed(3));
+};
+</script>
+  <div id='mokujitwo'>  
+    <li><span class="yellow_background">{{mokujitwo}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+        <p>
+          ある国における一日あたりの交通事故の死者数は$\lambda=$<input type="number" value="9" id="koutuujiko_sisyasuu_ichinichiatari_heikin">のポアソン分布に従う。
+          一日で<input type="number" value="9" id="koutuujiko_sisyasuu_ichinichiatari_ijou">人以上の死者数がでる確率を求めよ。
+        </p>
+        <p><input type="button" value="解答" onclick="keisan_poasonbunpu()"></p>    　
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3><span class="redunderline"><span id="kaitou_poasonbunpu">???</span>%</span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <h4><span class="green_background">解説</span></h4>
+      <p>
+        「希な現象の大量観測」によって発生する現象の個数の分布を表すのにポアソン分布が用いられる。
+        二項分布において$np=\lambda$で一定かつ、$n\rightarrow\infty,~p\rightarrow0$が成立する時、
+        ポアソン分布に近づく。
+      </p>
+      <div>
+        \[
+        \begin{align}
+        p(x)=P(X=x)=\frac{\lambda^x}{x!}e^{-\lambda},~~x=0,1,2,...,
+        \end{align}
+        \]
+        <p>$P(X\geqq$<input id="koutuujiko_sisyasuu_ichinichiatari_ijou_rendou" value="9" type="number" disabled>$)=$<span id="kaitou_poasonbunpu_sonomama" class="redunderline">ここに答え</span></p>
+      </div>     
+    </div>
+  </div>
+<script>
+function keisan_poasonbunpu(){
+  var koutuujiko_sisyasuu_ichinichiatari_heikin=parseFloat($('#koutuujiko_sisyasuu_ichinichiatari_heikin').val());
+  var koutuujiko_sisyasuu_ichinichiatari_ijou=parseFloat($('#koutuujiko_sisyasuu_ichinichiatari_ijou').val());
+  $('#koutuujiko_sisyasuu_ichinichiatari_ijou_rendou').val(koutuujiko_sisyasuu_ichinichiatari_ijou);
+  var hikuyatu=0;
+  for(var i=0; i<koutuujiko_sisyasuu_ichinichiatari_ijou; i++){
+    hikuyatu+=Math.pow(koutuujiko_sisyasuu_ichinichiatari_heikin,i)/math.permutations(i)*Math.pow(Math.E,-koutuujiko_sisyasuu_ichinichiatari_heikin);
+  };
+  result=1-hikuyatu;
+  $('#kaitou_poasonbunpu_sonomama').text(result);
+  $('#kaitou_poasonbunpu').text((Math.round(result*100000)/1000).toFixed(3));
+};
+</script>
+  <div id='mokujithree'>  
+    <li><span class="yellow_background">{{mokujithree}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+        <p>
+          20歳代の男性の身長が正規分布$\mathcal{N}($<input id="heikin_seikibunpu" type="number" value="170">
+          ($\mu$),&thinsp;<input id="hyoujunhensa_seikibunpu" type="number" value="6">$^2$
+          ($\sigma^2$)$)$に従うとする。
+          <input type="number" value="164" id="min_seikibunpu">~<input type="number" value="176" id="max_seikibunpu">
+          に入る人は全体の何%になるか。
+        </p>
+        <p><input type="button" value="解答" onclick="keisan_seikibunpu()"></p>    　
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3><span class="redunderline">$\Phi($<span id="kaitou_seikibunpu_max">???</span>$)-\Phi($<span id="kaitou_seikibunpu_min">???</span>$)$</span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <h4><span class="green_background">解説</span></h4>
+      <p>
+      </p>
+      <div>
+        \[
+        \begin{align}
+        P(x_1\leqq{X}\leqq{x_2})=&P(\frac{x_1-\mu}{\sigma}\leqq{Z}\leqq{\frac{x_2-\mu}{\sigma}})\\
+                                =&\Phi(\frac{x_2-\mu}{\sigma})-\Phi(\frac{x_1-\mu}{\sigma})
+        \end{align}
+        \]
+        <p>$P($<input type="number" value="164" id="min_seikibunpu_rendou" disabled>$\leqq{X}\leqq$<input id="max_seikibunpu_rendou" value="176" type="number" disabled>$)=$<span class="redunderline">$\Phi($<span id="kaitou_seikibunpu_max_sonomama">ここに答え</span>$)-\Phi($<span id="kaitou_seikibunpu_min_sonomama">ここに答え</span>$)$</span></p>
+      </div>     
+    </div>
+  </div>
+<script>
+function keisan_seikibunpu(){
+  var heikin_seikibunpu=$('#heikin_seikibunpu').val();
+  var hyoujunhensa_seikibunpu=$('#hyoujunhensa_seikibunpu').val();
+  var min_seikibunpu=$('#min_seikibunpu').val();
+  var max_seikibunpu=$('#max_seikibunpu').val();
+  phi_nakami_max=(max_seikibunpu-heikin_seikibunpu)/hyoujunhensa_seikibunpu;
+  phi_nakami_min=(min_seikibunpu-heikin_seikibunpu)/hyoujunhensa_seikibunpu;
+  $('#kaitou_seikibunpu_max_sonomama').text(phi_nakami_max);
+  $('#kaitou_seikibunpu_min_sonomama').text(phi_nakami_min);
+  $('#kaitou_seikibunpu_max').text((Math.round(phi_nakami_max*1000)/1000).toFixed(3));
+  $('#kaitou_seikibunpu_min').text((Math.round(phi_nakami_min*1000)/1000).toFixed(3));
+};
+</script>
+<!--
+    <li>{{mokujifour}}</li>
+    <li>{{mokujifive}}</li>
+    <li>{{mokujisix}}</li>
+    <li>{{mokujiseven}}</li>
+    <li>{{mokujieight}}</li>
+    <li>{{mokujinine}}</li>
+    <li>{{mokujiten}}</li>
+    <li>{{mokujieleven}}</li>
+    <li>{{mokujitwelve}}</li>
+-->
+</ol>
+{% endblock %}

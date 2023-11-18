@@ -1,0 +1,45 @@
+/*確率分布と期待値----------------------------------*/
+.canvas{
+    position: relative;
+    width: 100vw;
+    height: 0vh;
+    left: -6vw;
+}
+.opencanvas{
+    height: 80vh;
+}
+.z_index_up {
+    position: relative;
+}
+#myDoughnutChart_renzoku{
+    position: absolute;
+}
+#circle_text{
+    position: absolute;
+}
+#circle_text .renzoku_haichi {
+	font: 38px 'Monaco', MonoSpace;
+    color:rgb(221, 51, 51);
+    position: absolute;
+    background-color: rgba(136, 255, 0, 0.363);
+    height: 34.75vh;
+    width: .45vw;
+    left: 49.84vw;
+	top: 10vh;
+	transform-origin: bottom center;
+}
+#circle_text .renzoku_haichi span{
+    position: absolute;
+    transform: translate(-7.4px,0px);
+}
+.char1 { transform: rotate(0deg) translate(0%,0%)}
+.char2 { transform: rotate(36deg); }
+.char3 { transform: rotate(72deg); }
+.char4 { transform: rotate(108deg); }
+.char5 { transform: rotate(144deg); }
+.char6 { transform: rotate(180deg); }
+.char7 { transform: rotate(216deg); }
+.char8 { transform: rotate(252deg); }
+.char9 { transform: rotate(288deg); }
+.char10 { transform: rotate(324deg); }
+/*-------------------------------------------------------------------*/

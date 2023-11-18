@@ -1,0 +1,160 @@
+{% extends 'app/base.html' %}
+{% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/sonota.css' %}">
+
+<ol id="ol">
+  <div id='mokujione'>  
+    <li><span class="yellow_background">{{mokujione}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+      <p>
+        表が出る確率が$p$のコインがある。
+        このコインを<input type="number" value="100" id="sikoukaisuu">回投げたら<input type="number" value="80" id="omote_kaisuu">回表が出た。
+        最尤法により$p$を推定せよ。
+      </p>
+      <p><input type="button" value="解答" onclick="saiyuuhou_nikoubunpu()"></p>    　
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3><span class="redunderline"><span id="kaitou_nikoubunpu">???</span></span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <p></p>
+      <h4><span class="green_background">解説</span></h4>
+      <p>
+        成功確率pのベルヌーイ試行を$n$回繰り返した。二項分布に従う。
+        試行回数を$n$、表が出た回数を$x$とする。
+      </p>
+      <div>
+        \[
+        \hat{p}=pの最尤推定量=\frac{x}{n}
+        \]
+        <p>$\hat{p}=$<span id="kaitou_nikoubunpu_sonomama" class="redunderline">ここに答え</span></p>
+      </div>     
+    </div>
+  </div>
+<script>
+function saiyuuhou_nikoubunpu(){
+  var sikoukaisuu=$('#sikoukaisuu').val();
+  var omote_kaisuu=$('#omote_kaisuu').val();
+  saiyuusuiteiryou_nikoubunpu=BN(omote_kaisuu).div(sikoukaisuu);
+  $('#kaitou_nikoubunpu_sonomama').text(saiyuusuiteiryou_nikoubunpu);
+  $('#kaitou_nikoubunpu').text(saiyuusuiteiryou_nikoubunpu.dp(3,4).toFixed(3));
+};
+</script>
+  <div id='mokujitwo'>  
+    <li><span class="yellow_background">{{mokujitwo}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+      <p>
+        ある会社で製造されているコインをランダムに<input type="number" value="64" id="sample_kosuu">個選んで重さを測ったところ、
+        標本平均$(\bar{X})=$<input type="number" value="3.95" id="hyouhon_heikin">であった。
+        母集団の標準偏差$\sigma$は既知であり、$\sigma=$<input type="number" value="0.1" id="hyouhon_hyoujunhensa">である。
+       コインの重さは正規分布に従うとして、コインの重さについて信頼係数95%, 99%の信頼区間を作れ。$z_{0.025}=1.96,~z_{0.005}=2.58$。
+      </p>
+      <p><input type="button" value="解答" onclick="keisan_sinraikukan()"></p>    　
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3>信頼係数95%：<span class="redunderline">[<span id="sinraikukan_hidari">???</span>,&thinsp;<span id="sinraikukan_migi">???</span>]</span></h3>
+      <h3>信頼係数99%：<span class="redunderline">[<span id="sinraikukan_hidari_99">???</span>,&thinsp;<span id="sinraikukan_migi_99">???</span>]</span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <p></p>
+      <h4><span class="green_background">解説</span></h4>
+      <p>
+        $\alpha=0.05,~0.01$である。
+      </p>
+      <div>
+        \[
+        C_{\mu}(\bar{X},\sigma^2)=[\bar{X}-\frac{\sigma}{\sqrt{n}}z_{\frac{\alpha}{2}},~~\bar{X}+\frac{\sigma}{\sqrt{n}}z_{\frac{\alpha}{2}}]
+        \]
+        <p>信頼係数95%：<span class="redunderline">[<span id="sinraikukan_hidari_sonomama">???</span>,&thinsp;<span id="sinraikukan_migi_sonomama">???</span>]</span></p>
+        <p>信頼係数99%：<span class="redunderline">[<span id="sinraikukan_hidari_sonomama_99">???</span>,&thinsp;<span id="sinraikukan_migi_sonomama_99">???</span>]</span></p>
+      </div>     
+    </div>
+  </div>
+<script>
+function keisan_sinraikukan(){
+  var sample_kosuu=$('#sample_kosuu').val();
+  var hyouhon_heikin=$('#hyouhon_heikin').val();
+  var hyouhon_hyoujunhensa=$('#hyouhon_hyoujunhensa').val();
+  sinraikukan_hidari=BN(hyouhon_heikin).minus(BN(hyouhon_hyoujunhensa).times(1.96).div(BN(sample_kosuu).sqrt()));
+  sinraikukan_migi=BN(hyouhon_heikin).plus(BN(hyouhon_hyoujunhensa).times(1.96).div(BN(sample_kosuu).sqrt()));
+  $('#sinraikukan_hidari_sonomama').text(sinraikukan_hidari);
+  $('#sinraikukan_migi_sonomama').text(sinraikukan_migi);
+  $('#sinraikukan_hidari').text(sinraikukan_hidari.dp(3,BigNumber.ROUND_HALF_UP).toFixed(3));
+  $('#sinraikukan_migi').text(sinraikukan_migi.dp(3,BigNumber.ROUND_HALF_UP).toFixed(3));
+  sinraikukan_hidari_99=BN(hyouhon_heikin).minus(BN(hyouhon_hyoujunhensa).times(2.58).div(BN(sample_kosuu).sqrt()));
+  sinraikukan_migi_99=BN(hyouhon_heikin).plus(BN(hyouhon_hyoujunhensa).times(2.58).div(BN(sample_kosuu).sqrt()));
+  $('#sinraikukan_hidari_sonomama_99').text(sinraikukan_hidari_99);
+  $('#sinraikukan_migi_sonomama_99').text(sinraikukan_migi_99);
+  $('#sinraikukan_hidari_99').text(sinraikukan_hidari_99.dp(3,BigNumber.ROUND_HALF_UP).toFixed(3));
+  $('#sinraikukan_migi_99').text(sinraikukan_migi_99.dp(3,BigNumber.ROUND_HALF_UP).toFixed(3));
+};
+</script>
+  <div id='mokujithree'>  
+    <li><span class="yellow_background">{{mokujithree}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+      <p>
+        Ａ政権の支持率を$p$とする。<input type="number" value="2500" id="sample_ninzuu">人に聞いたところ
+        <input type="number" value="1012" id="ninzuu_siji">人が支持していた。
+        $p$の95%, 99%の信頼区間を求めよ。$z_{0.025}=1.96,~z_{0.005}=2.58$。
+      </p>
+      <p><input type="button" value="解答" onclick="keisan_sinraikukan_berunuui()"></p>    　
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3>信頼係数95%：<span class="redunderline">[<span id="sinraikukan_hidari_berunuui">???</span>,&thinsp;<span id="sinraikukan_migi_berunuui">???</span>]</span></h3>
+      <h3>信頼係数99%：<span class="redunderline">[<span id="sinraikukan_hidari_99_berunuui">???</span>,&thinsp;<span id="sinraikukan_migi_99_berunuui">???</span>]</span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <p></p>
+      <h4><span class="green_background">解説</span></h4>
+      <p>
+        $\alpha=0.05,~0.01$である。</br>
+        nが大きい時に近似することができる。
+      </p>
+      <div>
+        \[
+        \hat{\sigma}^2=\bar{X}(1-\bar{X})\\
+        C_{p}(\bar{X},\hat{\sigma}^2)=[\bar{X}-\frac{\sqrt{\bar{X}(1-\bar{X})}}{\sqrt{n}}z_{\frac{\alpha}{2}},~~\bar{X}+\frac{\sqrt{\bar{X}(1-\bar{X})}}{\sqrt{n}}z_{\frac{\alpha}{2}}]
+        \]
+        <p>信頼係数95%：<span class="redunderline">[<span id="sinraikukan_hidari_sonomama_berunuui">???</span>,&thinsp;<span id="sinraikukan_migi_sonomama_berunuui">???</span>]</span></p>
+        <p>信頼係数99%：<span class="redunderline">[<span id="sinraikukan_hidari_sonomama_99_berunuui">???</span>,&thinsp;<span id="sinraikukan_migi_sonomama_99_berunuui">???</span>]</span></p>
+      </div>     
+    </div>
+  </div>
+<script>
+function keisan_sinraikukan_berunuui(){
+  var sample_ninzuu=$('#sample_ninzuu').val();
+  var ninzuu_siji=$('#ninzuu_siji').val();
+  suiteiryou_p=BN(ninzuu_siji).div(sample_ninzuu)
+  sinraikukan_hidari_berunuui=suiteiryou_p.minus(suiteiryou_p.times(BN(1).minus(suiteiryou_p)).div(sample_ninzuu).sqrt().times(1.96));
+  sinraikukan_migi_berunuui=suiteiryou_p.plus(suiteiryou_p.times(BN(1).minus(suiteiryou_p)).div(sample_ninzuu).sqrt().times(1.96));
+  $('#sinraikukan_hidari_sonomama_berunuui').text(sinraikukan_hidari_berunuui);
+  $('#sinraikukan_migi_sonomama_berunuui').text(sinraikukan_migi_berunuui);
+  $('#sinraikukan_hidari_berunuui').text(sinraikukan_hidari_berunuui.dp(3,BigNumber.ROUND_HALF_UP).toFixed(3));
+  $('#sinraikukan_migi_berunuui').text(sinraikukan_migi_berunuui.dp(3,BigNumber.ROUND_HALF_UP).toFixed(3));
+  sinraikukan_hidari_berunuui_99=suiteiryou_p.minus(suiteiryou_p.times(BN(1).minus(suiteiryou_p)).div(sample_ninzuu).sqrt().times(2.58));
+  sinraikukan_migi_berunuui_99=suiteiryou_p.plus(suiteiryou_p.times(BN(1).minus(suiteiryou_p)).div(sample_ninzuu).sqrt().times(2.58));
+  $('#sinraikukan_hidari_sonomama_99_berunuui').text(sinraikukan_hidari_berunuui_99);
+  $('#sinraikukan_migi_sonomama_99_berunuui').text(sinraikukan_migi_berunuui_99);
+  $('#sinraikukan_hidari_99_berunuui').text(sinraikukan_hidari_berunuui_99.dp(3,BigNumber.ROUND_HALF_UP).toFixed(3));
+  $('#sinraikukan_migi_99_berunuui').text(sinraikukan_migi_berunuui_99.dp(3,BigNumber.ROUND_HALF_UP).toFixed(3));
+};
+</script>
+
+<!--
+    <li>{{mokujifour}}</li>
+    <li>{{mokujifive}}</li>
+    <li>{{mokujisix}}</li>
+    <li>{{mokujiseven}}</li>
+    <li>{{mokujieight}}</li>
+    <li>{{mokujinine}}</li>
+    <li>{{mokujiten}}</li>
+    <li>{{mokujieleven}}</li>
+    <li>{{mokujitwelve}}</li>
+-->
+  </ol>
+{% endblock %}

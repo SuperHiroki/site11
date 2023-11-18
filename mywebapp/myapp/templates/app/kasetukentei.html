@@ -1,0 +1,230 @@
+{% extends 'app/base.html' %}
+{% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/sonota.css' %}">
+
+<ol id="ol">
+  <div id='mokujione'>  
+    <li><span class="yellow_background">{{mokujione}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+      <p>
+        ある企業が製造しているコインの重さの平均($\mu$)について考える。
+        この企業は重さ<input type="number" value="1.5" id="for_kimukasetu">($\mu_0$)のコインを製造しているつもりである。
+        <input type="number" value="100" id="sample_kosuu">個のサンプルを調べたところ、
+        標本平均は、$\bar{x}=$<input type="number" value="1.6" id="hyouhon_heikin">であった。
+        母分散$\sigma^2$について、$\sigma^2=$<input type="number" value="0.25" id="bosyuudan_bunsan">が成立していることがすでに分かっている。
+        $\mu=\mu_0$であるという仮説(帰無仮説)を有意水準5%および1%で検定せよ。
+        $z_{0.025}=1.96,~z_{0.005}=2.58$。
+      </p>
+      <p><input type="button" value="解答" onclick="keisan_seikibunpu()"></p>    　
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3>有意水準5%：<span class="redunderline"><span id="hantei_5">???</span></span></h3>
+      <h3>有意水準1%：<span class="redunderline"><span id="hantei_1">???</span></span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <p></p>
+      <h4><span class="green_background">解説</span></h4>
+      <p>
+        帰無仮説$H_0$：$\mu=\mu_0$</br>
+        対立仮説$H_0$：$\mu\neq\mu_0$</br></br>
+        帰無仮説が棄却されたら、企業が実際に製造しているコインの重さ($\mu$)と企業が製造しているつもりだったコインの重さ($\mu_0$)が
+        違うということになる。</br></br>
+        下記の式が棄却域である。
+      </p>
+      <div>
+        \[
+        \frac{\sqrt{n}|\bar{x}-\mu_0|}{\sigma}>{z_{\alpha/2}}\\
+        \]
+      </div>
+      <div>
+        \[
+        \alpha=0.05\longrightarrow{z_{\alpha/2}}=1.96\\
+        \alpha=0.01\longrightarrow{z_{\alpha/2}}=2.58\\
+        \]
+      </div>
+      <h4>$\frac{\sqrt{n}|\bar{x}-\mu_0|}{\sigma}=$<span class="redunderline"><span id="sahen_sonomama">ここに答え</span></span></h4> 
+    </div>
+  </div>
+<script>
+function keisan_seikibunpu(){
+  var sample_kosuu=$('#sample_kosuu').val();
+  var hyouhon_heikin=$('#hyouhon_heikin').val();
+  var bosyuudan_bunsan=$('#bosyuudan_bunsan').val();
+  var for_kimukasetu=$('#for_kimukasetu').val();
+  bosyuudan_hyoujunhensa=BN(bosyuudan_bunsan).sqrt();
+  sahen=BN(sample_kosuu).sqrt().times(BN(hyouhon_heikin).minus(for_kimukasetu).absoluteValue()).div(bosyuudan_hyoujunhensa);
+  $('#sahen_sonomama').text(sahen);
+  if(sahen>1.96){$('#hantei_5').text('有意である(帰無仮説は棄却される)')}else{$('#hantei_5').text('有意でない(帰無仮説は受容される)')};
+  if(sahen>2.58){$('#hantei_1').text('有意である(帰無仮説は棄却される)')}else{$('#hantei_1').text('有意でない(帰無仮説は受容される)')};
+};
+</script>
+  <div id='mokujitwo'>  
+    <li><span class="yellow_background">{{mokujitwo}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+      <p>
+        ある企業が製造するコインの実際の不良率を$p$とする。
+        噂では、その企業が製造するコインの不良率は、$p_0=$<input type="number" value="1" id="for_kimukasetu_berunuui">%であると言われている。
+        <input type="number" value="2222" id="sample_kosuu_berunuui">個のサンプルを調べたところ、
+        不良率は、$\bar{x}=$<input type="number" value="1.5" id="hyouhon_heikin_berunuui">%であった。
+        $p=p_0$であるという仮説(帰無仮説)を有意水準5%および1%で検定せよ。
+        $z_{0.025}=1.96,~z_{0.005}=2.58$。
+      </p>
+      <p><input type="button" value="解答" onclick="keisan_berunuui()"></p>    　
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3>有意水準5%：<span class="redunderline"><span id="hantei_5_berunuui">???</span></span></h3>
+      <h3>有意水準1%：<span class="redunderline"><span id="hantei_1_berunuui">???</span></span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <p></p>
+      <h4><span class="green_background">解説</span></h4>
+      <p>
+        nが大きい時、近似分布に基づいた検定が行える。</br></br>
+        帰無仮説$H_0:p=p_0$</br>
+        対立仮説$H_1:p\neq{p_0}$</br></br>
+        帰無仮説が棄却されたら、実際の不良率($p$)と噂の不良率($p_0$)が違うということになる。</br>
+        下記の式が棄却域である。
+      </p>
+      <div>
+        \[
+        \frac{\sqrt{n}|\bar{x}-p_0|}{\sqrt{p_0(1-p_0)}}>{z_{\alpha/2}}\\
+        \]
+      </div>
+      <div>
+        \[
+        \alpha=0.05\longrightarrow{z_{\alpha/2}}=1.96\\
+        \alpha=0.01\longrightarrow{z_{\alpha/2}}=2.58\\
+        \]
+      </div>
+      <h4>$\frac{\sqrt{n}|\bar{x}-p_0|}{\sqrt{p_0(1-p_0)}}=$<span class="redunderline"><span id="sahen_sonomama_berunuui">ここに答え</span></span></h4> 
+    </div>
+  </div>
+  <script>
+  function keisan_berunuui(){
+    var for_kimukasetu_berunuui=BN($('#for_kimukasetu_berunuui').val()).div(100);
+    var sample_kosuu_berunuui=$('#sample_kosuu_berunuui').val();
+    var hyouhon_heikin_berunuui=BN($('#hyouhon_heikin_berunuui').val()).div(100);
+    sahen=BN(sample_kosuu_berunuui).div(for_kimukasetu_berunuui).div(BN(1).minus(for_kimukasetu_berunuui)).sqrt().times(BN(hyouhon_heikin_berunuui).minus(for_kimukasetu_berunuui).absoluteValue());
+    $('#sahen_sonomama_berunuui').text(BN(sahen));
+    if(sahen>1.96){$('#hantei_5_berunuui').text('有意である(帰無仮説は棄却される)')}else{$('#hantei_5_berunuui').text('有意でない(帰無仮説は受容される)')};
+    if(sahen>2.58){$('#hantei_1_berunuui').text('有意である(帰無仮説は棄却される)')}else{$('#hantei_1_berunuui').text('有意でない(帰無仮説は受容される)')};
+  };
+  </script>
+  <div id='mokujithree'>  
+    <li><span class="yellow_background">{{mokujithree}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+      <p>
+        $A_1$は薬を服用した事象、$A_2$は薬を服用していない事象、$B_1$は病気が治癒した事象、$B_2$は病気が治癒してない事象である。
+        薬の服用と病気の治癒の間に関連があるのかどうか、有意水準($\alpha$)5%と1%で検定をせよ。
+      </p>
+      <div>
+        <table>
+          <tr><th>\</th><th>$B_1$</th><th>$B_2$</th><th>計</th></tr>
+          <tr><th>$A_1$</th><td><input type="number" value="160" id="A1_katu_B1"></td><td><input type="number" value="40" id="A1_katu_B2"></td><td><input type="number" id="A1" value="200"></td></tr>
+          <tr><th>$A_2$</th><td><input type="number" value="930" id="A2_katu_B1"></td><td><input type="number" value="370" id="A2_katu_B2"></td><td><input type="number" id="A2" value="1300"></td></tr>
+          <tr><th>計</th><td><input type="number" id="B1" value="1090"></td><td><input type="number" id="B2" value="410"></td><td><input type="number" id="ninzuu_goukei" value="1500"></td></tr>
+        </table>
+      </div>
+      <p><input type="button" value="解答" onclick="keisan_kentei_dokuritu()"></p>   
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3>$\chi^2=$<span class="redunderline"><span id="kainijouchi_kaitou">カイ二乗値</span></span></h3>
+      <h4>関連あるのか($\alpha=0.05$)：<span class="redunderline" id="dokuritusei_05_kaitou">検定結果</span></h4>
+      <h4>関連あるのか($\alpha=0.01$)：<span class="redunderline" id="dokuritusei_01_kaitou">検定結果</span></h4>
+      <p>(小数点第四位四捨五入)</p>
+      <h4><span class="green_background">解説</span></h4> 
+      <div>
+        <div>
+        カイ二乗分布による検定を行う。
+        </div>
+        </br>
+        <div>
+        帰無仮説($H_0$)と対立仮説($H_1$)を以下のように設定する。
+        \[
+        \begin{align}
+        H_0 &: 薬の服用と病気の治癒の間に関連がない。\\
+        H_1 &: 薬の服用と病気の治癒の間に関連がある。\\
+        \end{align}
+        \]
+        </div>
+        </br>
+        <div>
+        有意水準を$\alpha$とする。</br>
+        独立性の検定では片側検定を行うため、${\chi_{\frac{\alpha}{2}}}^2$ではなく、${\chi_{\alpha}}^2$を用いる。</br>
+        今回は自由度は${(2-1)}\times{(2-1)}=1$である。
+        \[
+        \begin{align}
+        {\chi_{1,~0.05}}^2=&3.84146\\
+        {\chi_{1,~0.01}}^2=&6.63490\\
+        \end{align}
+        \]
+        </div>
+        </br>
+        <div>
+        今回はイェーツの補正を用いない。</br>
+        $f_{i,j}$を実際の値、$g_{i,j}$を関連がないと仮定した時の理論値とする。$N$は合計人数とする。
+        \[
+        g_{i,j}=\frac{f_{i,･}\times{f_{･,j}}}{N}\\
+        \chi^2=\sum_{j=1}^{n}\sum_{i=1}^{m}\frac{(f_{i,j}-g_{i,j})^2}{g_{i,j}}\\
+        \]
+        <p>$\chi^2=$<span class="redunderline" id="kainijouchi">カイ二乗値</span></p>
+        <p>$\alpha=0.05$の時の棄却域：$\chi^2>{\chi_{0.05}}^2(1)=3.84146$</p>
+        <p>$\alpha=0.01$の時の棄却域：$\chi^2>{\chi_{0.01}}^2(1)=6.63490$</p>
+        <p>独立性($\alpha=0.05$)：<span class="redunderline" id="dokuritusei_05_betunobasyo">検定結果</span></p>
+        <p>独立性($\alpha=0.01$)：<span class="redunderline" id="dokuritusei_01_betunobasyo">検定結果</span></p>
+        </div>
+      </div>     
+    </div>
+  </div>
+<script>
+function keisan_kentei_dokuritu(){
+  var A1_katu_B1=$('#A1_katu_B1').val();
+  var A1_katu_B2=$('#A1_katu_B2').val();
+  var A1=$('#A1').val();
+  var A2_katu_B1=$('#A2_katu_B1').val();
+  var A2_katu_B2=$('#A2_katu_B2').val();
+  var A2=$('#A2').val();
+  var B1=$('#B1').val();
+  var B2=$('#B2').val();
+  var ninzuu_goukei=$('#ninzuu_goukei').val();
+  kajijouchi=((BN(A1_katu_B1).minus(BN(A1).times(B1).div(ninzuu_goukei))).pow(2).div(BN(A1).times(B1).div(ninzuu_goukei)))
+        .plus((BN(A1_katu_B2).minus(BN(A1).times(B2).div(ninzuu_goukei))).pow(2).div(BN(A1).times(B2).div(ninzuu_goukei)))
+        .plus((BN(A2_katu_B1).minus(BN(A2).times(B1).div(ninzuu_goukei))).pow(2).div(BN(A2).times(B1).div(ninzuu_goukei)))
+        .plus((BN(A2_katu_B2).minus(BN(A2).times(B2).div(ninzuu_goukei))).pow(2).div(BN(A2).times(B2).div(ninzuu_goukei)));
+  $('#kainijouchi').text(kajijouchi);
+  $('#kainijouchi_kaitou').text(kajijouchi.dp(3,BigNumber.ROUND_HALF_UP).toFixed(3));
+  if(kajijouchi>3.84146){
+    $('#dokuritusei_05_betunobasyo').text('有意である(帰無仮説は棄却される)');
+    $('#dokuritusei_05_kaitou').text('有意である(帰無仮説は棄却される)');
+  }else{
+    $('#dokuritusei_05_betunobasyo').text('有意でない(帰無仮説は受容される)');
+    $('#dokuritusei_05_kaitou').text('有意でない(帰無仮説は受容される)');
+  };
+  if(kajijouchi>6.63490){
+    $('#dokuritusei_01_betunobasyo').text('有意である(帰無仮説は棄却される)');
+    $('#dokuritusei_01_kaitou').text('有意である(帰無仮説は棄却される)');
+  }else{
+    $('#dokuritusei_01_betunobasyo').text('有意でない(帰無仮説は受容される)');
+    $('#dokuritusei_01_kaitou').text('有意でない(帰無仮説は受容される)');
+  };
+};
+</script>
+<!--
+    <li>{{mokujifour}}</li>
+    <li>{{mokujifive}}</li>
+    <li>{{mokujisix}}</li>
+    <li>{{mokujiseven}}</li>
+    <li>{{mokujieight}}</li>
+    <li>{{mokujinine}}</li>
+    <li>{{mokujiten}}</li>
+    <li>{{mokujieleven}}</li>
+    <li>{{mokujitwelve}}</li>
+-->
+  </ol>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'app/base.html' %}
+{% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/sonota.css' %}">
+
+<ol>
+  <div id='mokujione'>  
+    <li><span class="oodai">{{mokujione}}</span></li>
+  </div>
+  <div id='mokujitwo'>  
+    <li><span class="oodai">{{mokujitwo}}</span></li>
+  </div>
+  <div id='mokujithree'>  
+    <li><span class="oodai">{{mokujithree}}</span></li>
+  </div>
+<!--
+    <li>{{mokujifour}}</li>
+    <li>{{mokujifive}}</li>
+    <li>{{mokujisix}}</li>
+    <li>{{mokujiseven}}</li>
+    <li>{{mokujieight}}</li>
+    <li>{{mokujinine}}</li>
+    <li>{{mokujiten}}</li>
+    <li>{{mokujieleven}}</li>
+    <li>{{mokujitwelve}}</li>
+-->
+  </ol>
+{% endblock %}

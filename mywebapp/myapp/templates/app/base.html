@@ -1,0 +1,190 @@
+{% load static %}
+<head>
+<!--my_css-->
+<link rel="stylesheet" href="{% static 'css/base.css' %}">
+<!--boostrap.css-->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+<!--jquery,boostrap.js,popper.js-->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js" integrity="sha384-1CmrxMRARb6aLqgBO7yyAxTOQE2AKb9GfXnEo760AUcUmFx3ibVJJAzGytlQcNXd" crossorigin="anonymous"></script>
+<!--math.js-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.2/math.min.js" type="text/javascript"></script>
+<!--mathjax-->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML"></script>
+<meta http-equiv="X-UA-Compatible" CONTENT="IE=EmulateIE7" />
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    },
+    "HTML-CSS": { matchFontHeight: false },
+    displayAlign: "left",
+    displayIndent: "0em"
+  });
+</script>
+<!--bignumber.js-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/9.0.1/bignumber.js" type="text/javascript"></script>
+<script>
+//BigNumber=BN
+var BN=BigNumber.clone();
+</script>
+<!--chart.js-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
+<!--<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@1"></script>-->
+</head>
+<body>
+<!--上部-------------------------------------------------------------------------------->
+<div id="joubu">
+    <div id="background_for_change_opacity"></div>
+    <div id="daimei_ichibanue"><h1>統計チートシート</h1></div>
+    <div id="hajikuball">
+      <dl>
+      <dt></dt>
+        <dd></dd>
+        <dd></dd>
+        <dd></dd>
+        <dd></dd>
+        <dd></dd>
+        <dd></dd>
+        <dd></dd>
+        <dd></dd>
+        <dd></dd>
+      </dl>
+    </div>
+    <div id="for_border"></div>
+</div>
+<!--波紋お遊びと題名--------------------------------------------------------------------->
+<div id="hamonarea">
+  <div id="hamon">
+      <dd></dd>
+      <dd></dd>
+      <dd></dd>
+      <dd></dd>
+  </div>
+  <div id="namiuedaimei">
+    <h1><a tabindex="-1">{{hamonuedaimei}}<span class="kaigyoumae">{{hamonuedaimeisita}}</span></a></h1>
+  </div>
+</div>
+<!--「目次」、「問題と解答解説」------------------------------------------------------------------------>
+<div id="mokuji_mondai_kaitoukaisetu_area_zentai">
+  <div class="mokujinado_area_sorezore">
+    <div class="daimei_mokujinado_bg">
+      <h2>目次</h2>
+    </div> 
+    <div id="mokujinado_content_sorezore">
+      <ol>
+        <li><a href="#mokujione">{{mokujione}}</a></li>
+        <li><a href="#mokujitwo">{{mokujitwo}}</a></li>
+        <li><a href="#mokujithree">{{mokujithree}}</a></li>
+<!--
+        <li>{{mokujifour}}</li>
+        <li>{{mokujifive}}</li>
+        <li>{{mokujisix}}</li>
+        <li>{{mokujiseven}}</li>
+        <li>{{mokujieight}}</li>
+        <li>{{mokujinine}}</li>
+        <li>{{mokujiten}}</li>
+        <li>{{mokujieleven}}</li>
+        <li>{{mokujitwelve}}</li>
+-->
+      </ol>
+    </div>
+  </div>  
+  <div class="mokujinado_area_sorezore">
+    <div class="daimei_mokujinado_bg">
+      <h2>問題と解答解説</h2>
+    </div> 
+    <div class="mokujinado_content_sorezore">
+      {% block content %}
+      {% endblock %}
+    </div>
+  </div>
+</div>
+<!--メニューボタン----------------------------------------------------------->
+<div id="menubutton" onclick="menuboxopen()">
+    <i></i>
+    <i></i>
+    <i></i>
+</div>
+<!--メニューボックス---------------------------------------------------------------> 
+<div>
+  <dl id="menubox">
+    <div>
+      <dt><a tabindex="-1">ホーム<span class="kaigyoumae">$\spadesuit$</span></a></dt>
+        <dd><a href="{% url 'home' %}">サイト説明<span class="kaigyoumae">作成日, 参考文献, etc.</span></a></dd>
+    </div>
+    <div>
+      <dt><a tabindex="-1">基礎事項<span class="kaigyoumae">$\spadesuit\spadesuit$</span></a></dt>
+        <dd><a href="{% url 'bunpunotokuchou' %}">分布の特徴<span class="kaigyoumae">分散, 標準偏差, etc.</span></a></dd>
+        <dd><a href="{% url 'hubyoudoudo' %}">不平等度<span class="kaigyoumae">ローレンツ曲線, ジニ係数, etc.</span></a></dd>
+        <dd><a href="{% url 'nihensuunokankei' %}">二変数の関係<span class="kaigyoumae">共分散, 相関係数, 回帰, 残差, etc.</span></a></dd>
+    </div>
+    <div>
+      <dt><a tabindex="-1">確率<span class="kaigyoumae">$\spadesuit\spadesuit\spadesuit$</span></a></dt>
+        <dd><a href="{% url 'kakuritunokiso' %}">確率の基礎<span class="kaigyoumae">条件付き確率, etc.</span></a></dd>
+        <dd><a href="{% url 'kakuritubunputokitaichi' %}">確率分布と期待値<span class="kaigyoumae">離散確率変数(確率関数), 連続確立変数(確率密度関数), etc.</span></a></dd>
+        <dd><a href="{% url 'yuumeinakakuritubunpu' %}">有名な確率分布<span class="kaigyoumae">ベルヌーイ分布, 二項分布, ポアソン分布, 正規分布, etc.</span></a></dd>
+        <dd><a href="{% url 'tahensuunokakuritubunpu' %}">多変数の確率分布<span class="kaigyoumae">同時確率関数, 同時確率密度関数, 共分散, 相関係数, etc.</span></a></dd>
+    </div>
+    <div>
+      <dt><a tabindex="-1">統計的推測<span class="kaigyoumae">$\spadesuit\spadesuit\spadesuit\spadesuit$</span></a></dt>
+        <dd><a href="{% url 'randamuhyouhonkaranosuisoku' %}">ランダム標本と標本分布<span class="kaigyoumae">中心極限定理, 不偏分散, t-分布, etc.</span></a></dd>
+        <dd><a href="{% url 'suitei' %}">推定<span class="kaigyoumae">最尤推定量, 信頼区間, etc.</span></a></dd>
+        <dd><a href="{% url 'kasetukentei' %}">仮説検定<span class="kaigyoumae">両側(片側)検定, t-検定,, etc.</span></a></dd>
+        <dd><a href="{% url 'kaikibunseki' %}">回帰分析<span class="kaigyoumae">???</span></a></dd>
+    </div>
+    <div>
+      <dt><a tabindex="-1">社会/経済/時系列データ<span class="kaigyoumae">$\spadesuit\spadesuit\spadesuit\spadesuit\spadesuit$</span></a></dt>
+        <dd><a href="{% url 'keizaisyakaideitanotoukeibunseki' %}">経済/社会データの統計分析<span class="kaigyoumae">???</span></a></dd>     
+        <dd><a href="{% url 'jikeiretudeitanotoukeibunseki' %}">時系列データの統計分析<span class="kaigyoumae">???</span></a></dd>
+    </div>
+  </dl>
+</div>
+
+<script>
+/*大メニューオープン*/
+function menuboxopen(){
+  document.querySelector("#menubox").classList.toggle("open");
+  document.querySelector("#menubutton").classList.toggle("open");
+};
+/*小メニューオープン*/
+$(function(){
+  $("#menubox dt").on("click",function(){
+    $(this).nextAll().toggleClass('open');
+  });
+});
+/*ボールみたいのを弾くお遊び*/
+$(function(){
+  $('#joubu').on("click",function(){
+    $('#background_for_change_opacity').toggleClass('changebg')
+    $('#hajikuball dd').toggleClass('houbutusen');
+  });
+});
+/*波紋*/
+$(function(){
+  $('#hamonarea').on('click',function(e){
+    $('#hamon').children().removeClass('hamontukuru');
+  });
+});
+$(function(){
+  $('#hamonarea').on('click',function(e){
+    var w=$('#hamon').children().width();
+    var h=$('#hamon').children().height();
+    var x_kado=e.offsetX;
+    var y_kado=e.offsetY;
+    var x=x_kado-w/2;
+    var y=y_kado-h/2;
+    $('#hamon').children().css({
+      top:y,
+      left:x,
+    });
+    $('#hamon').children().addClass('hamontukuru');
+    $('#hamon').children().on('animationend', function(){　　　　　/*これだとanimation-delayを使った時。早く消えてしまう。*/
+      $('#hamon').children().removeClass('hamontukuru');
+    });
+  });
+});
+</script>
+</body>

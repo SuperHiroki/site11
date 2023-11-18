@@ -1,0 +1,224 @@
+{% extends 'app/base.html' %}
+{% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/sonota.css' %}">
+
+<ol id="ol">
+<!--1-------------------------------------------------------------------------------------->
+  <div id='mokujione'><!--ここに飛べるように、idを作った。-->
+    <li><span class="yellow_background">{{mokujione}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+        <p>あるクラスの全員のテストの点数が下記に書かれている。平均点($\bar{x}$)、分散($S^2$)、標準偏差($S$)を求めよ。</p>
+        <p><input type="button" value="行追加" onclick="gyoutuika()"></p> 
+        <p><input type="button" value="行削除" onclick="gyousakujo()"></p> 
+        <div id="hyou">
+          <table>
+            <tr><th>番号</th><th>名前</th><th>点数</th></tr>
+            <tr id="seito_1"><td>1</td><td><input type="text" value="A君" placeholder="名前" class="namae"></td><td><input type="number" value="75" placeholder="点数" class="tensuu"></td></tr>
+          </table>
+        </div>
+        <p><input type="button" value="解答" onclick="keisan_heikinnado()"></p>    　
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3><span class="redunderline">平均点：<span id="heikin">???</span>点</span></h3>
+      <h3><span class="redunderline">分散：<span id="bunsan">???</span></span></h3>
+      <h3><span class="redunderline">標準偏差：<span id="hyoujunhensa">???</span></span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <h4><span class="green_background">解説</span></h4>
+      <p></p>
+      <div>
+        \[
+        \begin{align}
+        &\bar{x}=\frac{1}{n}\sum_{i=1}^nx_i\\
+        &    S^2=\frac{1}{n}\sum_{i=1}^n(x_i-\bar{x})^2=\frac{1}{n}\sum_{i=1}^n(x_i^2)-\bar{x}^2\\
+        &      S=\sqrt{S^2}
+        \end{align}
+        \]
+        <p>$\bar{x}=$<span class="redunderline" id="heikin_betunobasyo">ここに答え</span></p>
+        <p>$S^2=$<span class="redunderline" id="bunsan_betunobasyo">ここに答え</span></p>
+        <p>$S=$<span class="redunderline" id="hyoujunhensa_betunobasyo">ここに答え</span></p>
+      </div>     
+    </div>
+  </div>
+<script>
+//行追加、行削除--------------------------------------------
+var gyou_kosuu = 1 ;
+function gyoutuika() {
+  gyou_kosuu++ ;
+  var random_int=Math.floor(Math.random()*(100-0))+0;
+  $('#hyou table').append('<tr><td>'+gyou_kosuu+'</td><td><input type="text" value="" placeholder="名前" class="namae"></td><td><input type="number" value="'+random_int+'" placeholder="点数" class="tensuu"></td></tr>');
+};
+function gyousakujo() {
+  if ($('#hyou table tr').length >= 2) {
+    $('#hyou table').find('tr:last').remove();//findのところはchildrenではうまくいかない。tableの子要素はtbodyであるので、trはtableの孫要素となる。
+    gyou_kosuu-- ;
+  };
+};
+//平均、分散、標準偏差の計算。--------------------------------
+function keisan_heikinnado(){
+  var tensuulist = $("#hyou table td input[class=tensuu]").map(function(index, nakami){
+      return parseInt($(nakami).val());
+  });
+//heikin
+  var total = 0;
+  tensuulist.each(function(index, nakami){
+      total = BN(total).plus(nakami);
+  });
+  heikin=BN(total).div(gyou_kosuu);
+  heikin_sisyagonyuu=(Math.round(heikin*1000)/1000).toFixed(3);
+  $('#heikin').text(heikin_sisyagonyuu);
+  $('#heikin_betunobasyo').text(heikin);
+//bunsan
+  var bunsan=0;
+  tensuulist.each(function(index, nakami){
+    bunsan=BN(bunsan).plus(BN(nakami).minus(heikin).pow(2));
+  });
+  bunsan=BN(bunsan).div(gyou_kosuu);
+  bunsan_sisyagonyuu=(Math.round(bunsan*1000)/1000).toFixed(3);
+  $('#bunsan').text(bunsan_sisyagonyuu);
+  $('#bunsan_betunobasyo').text(bunsan);
+//hyoujunhensa
+  hyoujunhensa=BN(bunsan).sqrt();
+  hyoujunhensa_sisyagonyuu=(Math.round(hyoujunhensa*1000)/1000).toFixed(3);
+  $('#hyoujunhensa').text(hyoujunhensa_sisyagonyuu);
+  $('#hyoujunhensa_betunobasyo').text(hyoujunhensa);
+};
+//focusoutした時に、minとmaxが反映されるように。全体。-----------------
+$('input[type="number"]').focusout(function() {
+      if(typeof $(this).attr('min') !== "undefined" && parseInt($(this).val()) < parseInt($(this).attr('min')))
+          $(this).val($(this).attr('min'));
+      else if(typeof $(this).attr('max') !== "undefined" && parseInt($(this).val()) > parseInt($(this).attr('max')))
+          $(this).val($(this).attr('max'));
+      else if(typeof $(this).attr('min') !== "undefined" && $(this).val() === '')
+          $(this).val($(this).attr('min'));
+});
+</script>
+<!--2-------------------------------------------------------------------------------------->
+  <div id='mokujitwo'><!--ここに飛べるように、idを作った。-->
+    <li><span class="yellow_background">{{mokujitwo}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+        <p>
+          問題1の表より、<span><input type="text" value="A君" id="akunnamae" disabled></span>の点数は、<span><input type="number" value="75" id="akunnotensuu" disabled></span>点である。
+          偏差値を求めよ。
+        </p>
+        <p><input type="button" value="解答" onclick="keisan_hensachi()"></p>　
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3><span class="redunderline">偏差値：<span id="hensachi">???</span></span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <h4><span class="green_background">解説</span></h4>
+      <p>
+        偏差値というのは、平均50、標準偏差10のデータの変数($y_i$)である。もともとのデータの変数を$x_i$として、それを
+        標準化した変数を$z_i$とする。偏差値は次のように書ける。
+      </p>
+      <div>
+        \[
+        \begin{align}
+        z_i=&\frac{x_i-\bar{x}}{S}\longleftarrow標準化\\
+        y_i=&50+10z_i\\
+           =&50+10\frac{x_i-\bar{x}}{S}
+        \end{align}
+        \]
+        <p>$y_1=$<span class="redunderline" id="hensachi_betunobasyo">ここに答え</span></p>
+      </div>     
+    </div>
+  </div>
+<script>
+//問題1のＡ君と結びつける------------------------------------------
+$('#seito_1 input[class=namae]').focusout(function(){
+  $('#akunnamae').val($('#seito_1 input[class=namae]').val());
+});
+$('#seito_1 input[class=tensuu]').focusout(function(){
+  $('#akunnotensuu').val($('#seito_1 input[class=tensuu]').val());
+});
+//偏差値を計算。--------------------------------------------------
+function keisan_hensachi(){
+  keisan_heikinnado();//ここの関数で定義された文字がなぜか使える。ある関数内で定義された文字はその関数内でしか使えないはずなのに。
+  var akunnotensuu=$('#seito_1 input[class=tensuu]').val();
+  hensachi=BN(50).plus(BN(akunnotensuu).minus(heikin).times(10).div(hyoujunhensa));
+  hensachi_sisyagonyuu=(Math.round(hensachi*1000)/1000).toFixed(3);
+  $('#hensachi').text(hensachi_sisyagonyuu);
+  $('#hensachi_betunobasyo').text(hensachi);
+};
+</script>
+<!--3----------------------------------------------------------------------------------->
+  <div id='mokujithree'>  
+     <li><span class="yellow_background">{{mokujithree}}</span></li>
+     <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+        <p>
+          問題1の表のデータの歪度と尖度を求めよ。
+        </p>
+        <p><input type="button" value="解答" onclick="keisan_waidonado()"></p>    　
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3><span class="redunderline">歪度：<span id="waido">???</span></span></h3>
+      <h3><span class="redunderline">尖度：<span id="sendo">???</span></span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <h4><span class="green_background">解説</span></h4>
+      <p>
+        まず<ruby><rb>歪度</rb><rp>（</rp><rt>わいど</rt><rp>）</rp></ruby>について解説する。
+        対称的な分布では$b_1=0$, 右に歪んだ分布は$b_1>0$, 左に歪んだ分布では$b_1＜0$となる。
+        次に<ruby><rb>尖度</rb><rp>（</rp><rt>せんど</rt><rp>）</rp></ruby>について解説する。
+        正規分布だと$b_2=3$となる。正規分布よりも尖っていたら$b_2>3$となり、正規分布よりも尖っていなかったら
+        $b_2＜3$となる。
+      <div>
+        \[
+        \begin{align}
+        (歪度)~~b_1=\frac{1}{n}\sum_{i=1}^{n}z_i^3=\frac{1}{n}\frac{\sum_{i=1}^{n}(x_i-\bar{x})^3}{Sx^3}\\
+        (尖度)~~b_2=\frac{1}{n}\sum_{i=1}^{n}z_i^4=\frac{1}{n}\frac{\sum_{i=1}^{n}(x_i-\bar{x})^4}{Sx^4}\\
+        \end{align}
+        \]
+        <p>$b_1=$<span class="redunderline" id="waido_betunobasyo">ここに答え</span></p>
+        <p>$b_2=$<span class="redunderline" id="sendo_betunobasyo">ここに答え</span></p>
+      </div>     
+    </div>
+  </div>
+<script>
+//歪度と尖度の計算。-------------------------------------------
+function keisan_waidonado(){
+  keisan_heikinnado();//ここの関数で定義された文字がなぜか使える。ある関数内で定義された文字はその関数内でしか使えないはずなのに。
+  var z_list = $("#hyou table td input[class=tensuu]").map(function(index, nakami){
+    var x_list= parseInt($(nakami).val());
+    return BN(x_list).minus(heikin);
+  });
+//歪度
+  var z_sanjou_total=0;
+  z_list.each(function(index,z_list_each){
+    z_sanjou_total=BN(z_sanjou_total).plus(BN(z_list_each).pow(3));
+  });
+  waido=BN(z_sanjou_total).div(gyou_kosuu).div(BN(hyoujunhensa).pow(3));
+  waido_sisyagonyuu=(Math.round(waido*1000)/1000).toFixed(3);
+  $('#waido').text(waido_sisyagonyuu);
+  $('#waido_betunobasyo').text(waido);
+//尖度
+  var z_yonjou_total=0;
+  z_list.each(function(index,z_list_each){
+    z_yonjou_total=BN(z_yonjou_total).plus(BN(z_list_each).pow(4));
+  });
+  sendo=BN(z_yonjou_total).div(gyou_kosuu).div(BN(hyoujunhensa).pow(4));
+  sendo_sisyagonyuu=(Math.round(sendo*1000)/1000).toFixed(3);
+  $('#sendo').text(sendo_sisyagonyuu);
+  $('#sendo_betunobasyo').text(sendo);
+};
+</script>
+  </div>
+<!---
+      <li>{{mokujifour}}</li>
+      <li>{{mokujifive}}</li>
+      <li>{{mokujisix}}</li>
+      <li>{{mokujiseven}}</li>
+      <li>{{mokujieight}}</li>
+      <li>{{mokujinine}}</li>
+      <li>{{mokujiten}}</li>
+      <li>{{mokujieleven}}</li>
+      <li>{{mokujitwelve}}</li>
+-->
+</ol>
+{% endblock %}

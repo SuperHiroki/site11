@@ -1,0 +1,40 @@
+{% extends 'app/base.html' %}
+{% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/sonota.css' %}">
+
+<ol id="ol">
+<!--サイト説明------------------------------------------------------------------------------------>
+  <div id='mokujione'>  
+    <li><span class="yellow_background">{{mokujione}}</span></li>
+        <p>この前の統計の試験全然できなかった。</p>
+  </div>
+<!--作成者、作成日---------------------------------------------------------------------------->
+  <div id='mokujitwo'>  
+    <li><span class="yellow_background">{{mokujitwo}}</span></li>
+      <dl>
+        <dt>作成者</dt>
+        <dd>jogo</dd>
+        <dt>作成日</dt>
+        <dd>2021/3/1</dd>
+      </dl>
+  </div>
+  <!--参考文献------------------------------------------------------------------------------->
+  <div id='mokujithree'>  
+    <li><span class="yellow_background">{{mokujithree}}</span></li>
+      <p>久保川達也・国友直人(2020)「統計学」(東京大学出版会)</p>
+　</div>
+<!--
+    <li>{{mokujifour}}</li>
+    <li>{{mokujifive}}</li>
+    <li>{{mokujisix}}</li>
+    <li>{{mokujiseven}}</li>
+    <li>{{mokujieight}}</li>
+    <li>{{mokujinine}}</li>
+    <li>{{mokujiten}}</li>
+    <li>{{mokujieleven}}</li>
+    <li>{{mokujitwelve}}</li>
+-->
+</ol>
+{% endblock %}

@@ -1,0 +1,802 @@
+{% extends 'app/base.html' %}
+{% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/sonota.css' %}">
+
+<ol id="ol">
+<!--一つ目の問題----------------------------------------------------------------------------->
+  <div id='mokujione'>  
+    <li><span class="yellow_background">{{mokujione}}</span></li>
+    <div><!--問題-->
+        <h4><span class="green_background">問題</span></h4>
+        <p>
+          あるクラスでテストを行ったところ、下記の表のような点数になった。
+          テストを行った科目のうちのある二科目について、共分散と相関係数を求めよ。
+        </p>
+        <p><input type="button" value="行追加" onclick="gyoutuika()"></p> 
+        <p><input type="button" value="行削除" onclick="gyousakujo()"></p> 
+        <div>
+          <table id="table_gokamoku_tensuu">
+            <tr><th>番号</th><th>名前</th><th>算数の点数</th><th>国語の点数</th><th>理科の点数</th><th>社会の点数</th><th>英語の点数</th></tr>
+            <tr><td>1</td><td><input type="text" value="A君" class="namae"></td><td><input type="number" value="75" name="tensuu_sansuu" class="tensuu_sansuu"></td><td><input type="number" value="75" name="tensuu_kokugo" class="tensuu_kokugo"></td><td><input type="number" value="75" name="tensuu_rika" class="tensuu_rika"></td><td><input type="number" value="75" name="tensuu_syakai" class="tensuu_syakai"></td><td><input type="number" value="75" name="tensuu_eigo" class="tensuu_eigo"></td></tr>
+          </table>
+          <br/>
+          <p><span></span><input type="button" value="それぞれの科目の平均、分散、標準偏差を求める。" onclick="keisan_heikin_bunsan_hyoujunhensa()"></p>
+          <table>
+            <tr><th>\</th><th>算数</th><th>国語</th><th>理科</th><th>社会</th><th>英語</th></tr>
+            <tr id='hyou_heikin'><th>平均</th><td><input type="number" value="" id="heikin_sansuu" readonly></td><td><input type="number" value="" id="heikin_kokugo" readonly></td><td><input type="number" value="" id="heikin_rika" readonly></td><td><input type="number" value="" id="heikin_syakai" readonly></td><td><input type="number" value="" id="heikin_eigo" readonly></td></tr>
+            <tr id='hyou_bunsan'><th>分散</th><td><input type="number" value="" id="bunsan_sansuu" readonly></td><td><input type="number" value="" id="bunsan_kokugo" readonly></td><td><input type="number" value="" id="bunsan_rika" readonly></td><td><input type="number" value="" id="bunsan_syakai" readonly></td><td><input type="number" value="" id="bunsan_eigo" readonly></td></tr>
+            <tr id='hyou_hyoujunhensa'><th>標準偏差</th><td><input type="number" value="" id="hyoujunhensa_sansuu" readonly></td><td><input type="number" value="" id="hyoujunhensa_kokugo" readonly></td><td><input type="number" value="" id="hyoujunhensa_rika" readonly></td><td><input type="number" value="" id="hyoujunhensa_syakai" readonly></td><td><input type="number" value="" id="hyoujunhensa_eigo" readonly></td></tr>
+          </table>
+        </div>
+        <div id="checkbox_nikamoku_sentaku">
+          <br/>
+          <p>###############################################################################################</p>
+          <p>二科目にチェックをつけてください。</p>
+          <input type="checkbox" name="checkbox_tensuu" value="sansuu">算数<br/>
+          <input type="checkbox" name="checkbox_tensuu" value="kokugo">国語<br/>
+          <input type="checkbox" name="checkbox_tensuu" value="rika">理科<br/>
+          <input type="checkbox" name="checkbox_tensuu" value="syakai">社会<br/>
+          <input type="checkbox" name="checkbox_tensuu" value="eigo">英語<br/>
+          <p>###############################################################################################</p>
+        </div>
+        <p><input type="button" value="解答" onclick="keisan_kyoubunsan_soukankeisuu()"><span>←二科目にチェックをつけてから押してください。</span></p>
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4> 
+      <h3><span class="redunderline">共分散：<span id="kyoubunsan">???</span></span></h3>
+      <h3><span class="redunderline">相関係数：<span id="soukankeisuu">???</span></span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <h4><span class="green_background">解説</span></h4>
+      <p></p>
+      <div>
+        \[
+        \begin{align}
+        (共分散)=S_{xy}&=\frac{1}{n}\sum_{i=1}^{n}(x_i-\bar{x})(y_i-\bar{y})\\
+        (xの標準偏差)=S_x&=\{\frac{1}{n}\sum_{i=1}^n(x_i-\bar{x})^2\}^{1/2}\\
+        (yの標準偏差)=S_y&=\{\frac{1}{n}\sum_{i=1}^n(y_i-\bar{y})^2\}^{1/2}\\
+        (相関係数)=r_{xy}&=\frac{S_{xy}}{S_xS_y}=\frac{\sum_{i=1}^{n}(x_i-\bar{x})(y_i-\bar{y})}{\sqrt{\sum_{i=1}^{n}(x_i-\bar{x})^2}\sqrt{\sum_{i=1}^{n}(y_i-\bar{y})^2}}\\
+        \end{align}
+        \]
+        <p>$(共分散)=$<span class="redunderline" id="kyoubunsan_betunobasyo">ここに答え</span></p>
+        <p>$(相関係数)=$<span class="redunderline" id="soukankeisuu_betunobasyo">ここに答え</span></p>
+      </div>     
+    </div>
+  </div>
+<script>
+//行追加、行削除、人数は順位表と一致させてる。-------------------------------------------------
+var gyou_kosuu = 1 ;
+var gyou_kosuu_juni = 1 ;
+function gyoutuika() {
+  gyou_kosuu++ ;
+  var random_int_1=Math.floor(Math.random()*(100-0))+0;
+  var random_int_2=Math.floor(Math.random()*(100-0))+0;
+  var random_int_3=Math.floor(Math.random()*(100-0))+0;
+  var random_int_4=Math.floor(Math.random()*(100-0))+0;
+  var random_int_5=Math.floor(Math.random()*(100-0))+0;
+  $('#table_gokamoku_tensuu').append('<tr><td>'+gyou_kosuu+'</td><td><input type="text" value="" class="namae"></td><td><input type="number" value="'+random_int_1+'" class="tensuu_sansuu"></td><td><input type="number" value="'+random_int_2+'" class="tensuu_kokugo"></td><td><input type="number" value="'+random_int_3+'" class="tensuu_rika"></td><td><input type="number" value="'+random_int_4+'" class="tensuu_syakai"></td><td><input type="number" value="'+random_int_5+'" class="tensuu_eigo"></td></tr>');
+  gyou_kosuu_juni++ ;
+  $('#table_gokamoku_juni').append('<tr><td>'+gyou_kosuu_juni+'</td><td><input type="text" value="" class="namae" disabled></td><td><input type="number" value="'+gyou_kosuu_juni+'" class="juni_sansuu" disabled></td><td><input type="number" value="'+gyou_kosuu_juni+'" class="juni_kokugo" disabled></td><td><input type="number" value="'+gyou_kosuu_juni+'" class="juni_rika" disabled></td><td><input type="number" value="'+gyou_kosuu_juni+'" class="juni_syakai" disabled></td><td><input type="number" value="'+gyou_kosuu_juni+'" class="juni_eigo" disabled></td></tr>');
+//点数の表と順位の表を連動させる
+  tensuuhyou_junihyou_icchi()
+};
+function gyousakujo() {
+  if (gyou_kosuu>= 2) {
+    $('#table_gokamoku_tensuu').find('tr:last').remove();
+    gyou_kosuu-- ;
+  };
+  if (gyou_kosuu_juni>= 2) {
+    $('#table_gokamoku_juni').find('tr:last').remove();
+    gyou_kosuu_juni-- ;
+  };
+//点数の表と順位の表を連動させる
+  tensuuhyou_junihyou_icchi()
+};
+</script>
+<script>
+//checkboxの数を二つまでに制限する。---------------------------------
+$("#checkbox_nikamoku_sentaku input[type=checkbox]").click(function(){
+  var $count = $("#checkbox_nikamoku_sentaku input[type=checkbox]:checked").length;
+  var $not = $('#checkbox_nikamoku_sentaku input[type=checkbox]').not(':checked');
+  if($count >= 2)
+  {$not.attr("disabled",true);}
+  else
+  {$not.attr("disabled",false);};
+});
+</script>
+<script>
+//それぞれの平均、分散、標準偏差を求める。----------------------------------
+function keisan_heikin_bunsan_hyoujunhensa(){
+  var ninzuu=0;
+  var tensuu_gyou=document.getElementById('table_gokamoku_tensuu').getElementsByTagName('tr');
+  var goukei_sansuu=0;
+  var goukei_kokugo=0;
+  var goukei_rika=0;
+  var goukei_syakai=0;
+  var goukei_eigo=0;
+  for(var i=1; i<tensuu_gyou.length; i++){
+    ninzuu+=1;
+    var tensuu_sansuu=tensuu_gyou[i].querySelector('.tensuu_sansuu').value;
+    goukei_sansuu=BN(goukei_sansuu).plus(tensuu_sansuu);
+    var tensuu_kokugo=tensuu_gyou[i].querySelector('.tensuu_kokugo').value;
+    goukei_kokugo=BN(goukei_kokugo).plus(tensuu_kokugo);
+    var tensuu_rika=tensuu_gyou[i].querySelector('.tensuu_rika').value;
+    goukei_rika=BN(goukei_rika).plus(tensuu_rika);
+    var tensuu_syakai=tensuu_gyou[i].querySelector('.tensuu_syakai').value;
+    goukei_syakai=BN(goukei_syakai).plus(tensuu_syakai);
+    var tensuu_eigo=tensuu_gyou[i].querySelector('.tensuu_eigo').value;
+    goukei_eigo=BN(goukei_eigo).plus(tensuu_eigo);
+  };
+  heikin_sansuu=BN(goukei_sansuu).div(ninzuu);
+  heikin_kokugo=BN(goukei_kokugo).div(ninzuu);
+  heikin_rika=BN(goukei_rika).div(ninzuu);
+  heikin_syakai=BN(goukei_syakai).div(ninzuu);
+  heikin_eigo=BN(goukei_eigo).div(ninzuu);
+  $('#heikin_sansuu').val(heikin_sansuu);
+  $('#heikin_kokugo').val(heikin_kokugo);
+  $('#heikin_rika').val(heikin_rika);
+  $('#heikin_syakai').val(heikin_syakai);
+  $('#heikin_eigo').val(heikin_eigo);
+  var bunsan_sansuu=0;
+  var bunsan_kokugo=0;
+  var bunsan_rika=0;
+  var bunsan_syakai=0;
+  var bunsan_eigo=0;
+  for(var i=1; i<tensuu_gyou.length; i++){
+    var tensuu_sansuu=tensuu_gyou[i].querySelector('.tensuu_sansuu').value;
+    var tensuu_kokugo=tensuu_gyou[i].querySelector('.tensuu_kokugo').value;
+    var tensuu_rika=tensuu_gyou[i].querySelector('.tensuu_rika').value;
+    var tensuu_syakai=tensuu_gyou[i].querySelector('.tensuu_syakai').value;
+    var tensuu_eigo=tensuu_gyou[i].querySelector('.tensuu_eigo').value;
+    bunsan_sansuu+=Math.pow((tensuu_sansuu-heikin_sansuu),2)/ninzuu;
+    bunsan_kokugo+=Math.pow((tensuu_kokugo-heikin_kokugo),2)/ninzuu;
+    bunsan_rika+=Math.pow((tensuu_rika-heikin_rika),2)/ninzuu;
+    bunsan_syakai+=Math.pow((tensuu_syakai-heikin_syakai),2)/ninzuu;
+    bunsan_eigo+=Math.pow((tensuu_eigo-heikin_eigo),2)/ninzuu;
+  };
+
+  $('#bunsan_sansuu').val(bunsan_sansuu);
+  $('#bunsan_kokugo').val(bunsan_kokugo);
+  $('#bunsan_rika').val(bunsan_rika);
+  $('#bunsan_syakai').val(bunsan_syakai);
+  $('#bunsan_eigo').val(bunsan_eigo);
+  hyoujunhensa_sansuu=Math.pow(bunsan_sansuu,1/2);
+  hyoujunhensa_kokugo=Math.pow(bunsan_kokugo,1/2);
+  hyoujunhensa_rika=Math.pow(bunsan_rika,1/2);
+  hyoujunhensa_syakai=Math.pow(bunsan_syakai,1/2);
+  hyoujunhensa_eigo=Math.pow(bunsan_eigo,1/2);
+  $('#hyoujunhensa_sansuu').val(hyoujunhensa_sansuu);
+  $('#hyoujunhensa_kokugo').val(hyoujunhensa_kokugo);
+  $('#hyoujunhensa_rika').val(hyoujunhensa_rika);
+  $('#hyoujunhensa_syakai').val(hyoujunhensa_syakai);
+  $('#hyoujunhensa_eigo').val(hyoujunhensa_eigo);
+  return {ninzuu:ninzuu, 
+    heikin_sansuu:heikin_sansuu, heikin_kokugo:heikin_kokugo, heikin_rika:heikin_rika, heikin_syakai:heikin_syakai, heikin_eigo:heikin_eigo,
+    hyoujunhensa_sansuu:hyoujunhensa_sansuu, hyoujunhensa_kokugo:hyoujunhensa_kokugo, hyoujunhensa_rika:hyoujunhensa_rika, hyoujunhensa_syakai:hyoujunhensa_syakai, hyoujunhensa_eigo:hyoujunhensa_eigo,
+  };
+};
+//共分散と相関係数の計算---------------------------------------------
+function keisan_kyoubunsan_soukankeisuu(){
+//別の関数を持ってくる。
+  var obj=keisan_heikin_bunsan_hyoujunhensa();
+//本題。
+  var tensuu_gyou=document.getElementById('table_gokamoku_tensuu').getElementsByTagName('tr');
+  var nikamoku_list=[];
+  const checkbox_tensuu = document.getElementsByName("checkbox_tensuu");
+  for (let i = 0; i < checkbox_tensuu.length; i++){
+    if(checkbox_tensuu[i].checked){ 
+      nikamoku_list.push(checkbox_tensuu[i].value);
+    };
+  };
+  var heikin_ichikamokume=0;
+  var heikin_nikamokume=0;
+  var kyoubunsan=0;
+  var soukankeisuu=0;
+  var hyoujunhensa_ichikamokume=0;
+  var hyoujunhensa_nikamokume=0;
+  var ninzuu=0;
+  ninzuu=obj.ninzuu;
+  if(nikamoku_list.includes('sansuu')===true){
+      heikin_ichikamokume=obj.heikin_sansuu;
+      hyoujunhensa_ichikamokume=obj.hyoujunhensa_sansuu;
+    }
+      else if(nikamoku_list.includes('kokugo')===true){
+        heikin_ichikamokume=obj.heikin_kokugo;
+        hyoujunhensa_ichikamokume=obj.hyoujunhensa_kokugo;
+      }
+        else if(nikamoku_list.includes('rika')===true){
+          heikin_ichikamokume=obj.heikin_rika;
+          hyoujunhensa_ichikamokume=obj.hyoujunhensa_rika;
+        }
+          else if(nikamoku_list.includes('syakai')===true){
+            heikin_ichikamokume=obj.heikin_syakai;
+            hyoujunhensa_ichikamokume=obj.hyoujunhensa_syakai;
+          }
+            else if(nikamoku_list.includes('eigo')===true){
+              heikin_ichikamokume=obj.heikin_eigo;
+              hyoujunhensa_ichikamokume=obj.hyoujunhensa_eigo;
+            };
+    if(nikamoku_list[1]==='sansuu'){
+      heikin_nikamokume=obj.heikin_sansuu;
+      hyoujunhensa_nikamokume=obj.hyoujunhensa_sansuu;
+    }
+      else if(nikamoku_list[1]==='kokugo'){
+        heikin_nikamokume=obj.heikin_kokugo;
+        hyoujunhensa_nikamokume=obj.hyoujunhensa_kokugo;
+      }
+        else if(nikamoku_list[1]==='rika'){
+          heikin_nikamokume=obj.heikin_rika;
+          hyoujunhensa_nikamokume=obj.hyoujunhensa_rika;
+        }
+          else if(nikamoku_list[1]==='syakai'){
+            heikin_nikamokume=obj.heikin_syakai;
+            hyoujunhensa_nikamokume=obj.hyoujunhensa_syakai;
+          }
+            else if(nikamoku_list[1]==='eigo'){
+              heikin_nikamokume=obj.heikin_eigo;
+              hyoujunhensa_nikamokume=obj.hyoujunhensa_eigo;
+            };
+  for (let i = 1; i < tensuu_gyou.length; i++){
+    if(nikamoku_list.includes('sansuu')===true){
+      var tensuu_ichikamokume=tensuu_gyou[i].querySelector('.tensuu_sansuu').value;
+    }
+      else if(nikamoku_list.includes('kokugo')===true){
+        var tensuu_ichikamokume=tensuu_gyou[i].querySelector('.tensuu_kokugo').value;
+      }
+        else if(nikamoku_list.includes('rika')===true){
+          var tensuu_ichikamokume=tensuu_gyou[i].querySelector('.tensuu_rika').value;
+        }
+          else if(nikamoku_list.includes('syakai')===true){
+            var tensuu_ichikamokume=tensuu_gyou[i].querySelector('.tensuu_syakai').value;
+          }
+            else if(nikamoku_list.includes('eigo')===true){
+              var tensuu_ichikamokume=tensuu_gyou[i].querySelector('.tensuu_eigo').value;
+            };
+    if(nikamoku_list[1]==='sansuu'){
+      var tensuu_nikamokume=tensuu_gyou[i].querySelector('.tensuu_sansuu').value;
+    }
+      else if(nikamoku_list[1]==='kokugo'){
+        var tensuu_nikamokume=tensuu_gyou[i].querySelector('.tensuu_kokugo').value;
+      }
+        else if(nikamoku_list[1]==='rika'){
+          var tensuu_nikamokume=tensuu_gyou[i].querySelector('.tensuu_rika').value;
+        }
+          else if(nikamoku_list[1]==='syakai'){
+            var tensuu_nikamokume=tensuu_gyou[i].querySelector('.tensuu_syakai').value;
+          }
+            else if(nikamoku_list[1]==='eigo'){
+              var tensuu_nikamokume=tensuu_gyou[i].querySelector('.tensuu_eigo').value;
+            };
+    kyoubunsan=BN(kyoubunsan).plus(  (BN(tensuu_ichikamokume).minus(heikin_ichikamokume)).times(BN(tensuu_nikamokume).minus(heikin_nikamokume))  );
+  };
+  kyoubunsan=BN(kyoubunsan).div(ninzuu);
+  soukankeisuu=BN(kyoubunsan).div(hyoujunhensa_ichikamokume).div(hyoujunhensa_nikamokume);
+  kyoubunsan_sisyagonyuu=(Math.round(kyoubunsan*1000)/1000).toFixed(3);
+  soukankeisuu_sisyagonyuu=(Math.round(soukankeisuu*1000)/1000).toFixed(3);
+  $('#kyoubunsan').text(kyoubunsan_sisyagonyuu);
+  $('#kyoubunsan_betunobasyo').text(kyoubunsan);
+  $('#soukankeisuu').text(soukankeisuu_sisyagonyuu);
+  $('#soukankeisuu_betunobasyo').text(soukankeisuu);
+};
+</script>
+<!--二つ目の問題----------------------------------------------------------------------------->
+  <div id='mokujitwo'>  
+    <li><span class="yellow_background">{{mokujitwo}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+      <p>
+      上記の表の点数を順位に変換すると、下記の表のようになる（スピアマンの順位相関係数を求める時に使いやすいように、同率の点数だった場合は平均の順位が示されている）。
+      テストを行った科目のうちのある二科目について、スピアマンの順位相関係数を求めよ。
+      </p>
+      <p><input type="button" value="行追加" onclick="gyoutuika()"></p> 
+      <p><input type="button" value="行削除" onclick="gyousakujo()"></p> 
+      <div>
+        <table id="table_gokamoku_juni">
+          <tr><th>番号</th><th>名前</th><th>算数の順位</th><th>国語の順位</th><th>理科の順位</th><th>社会の順位</th><th>英語の順位</th></tr>
+          <tr><td>1</td><td><input type="text" value="A君" class="namae" disabled></td><td><input type="number" value="1" class="juni_sansuu" disabled></td><td><input type="number" value="1" class="juni_kokugo" disabled></td><td><input type="number" value="1" class="juni_rika" disabled></td><td><input type="number" value="1" class="juni_syakai" disabled></td><td><input type="number" value="1" class="juni_eigo" disabled></td></tr>
+        </table>
+        <br/>
+      </div>
+      <div id="checkbox_nikamoku_sentaku_juni">
+        <br/>
+        <p>###############################################################################################</p>
+        <p>二科目にチェックをつけてください。</p>
+        <input type="checkbox" name="checkbox_juni" value="sansuu">算数<br/>
+        <input type="checkbox" name="checkbox_juni" value="kokugo">国語<br/>
+        <input type="checkbox" name="checkbox_juni" value="rika">理科<br/>
+        <input type="checkbox" name="checkbox_juni" value="syakai">社会<br/>
+        <input type="checkbox" name="checkbox_juni" value="eigo">英語<br/>
+        <p>###############################################################################################</p>
+      </div>
+      <p><input type="button" value="解答" onclick="keisan_supiaman_junisoukankeisuu()"><span>←二科目にチェックをつけてから押してください。</span></p>
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4>
+      <h3><span class="redunderline">スピアマンの順位相関係数：<span id="supiaman_junisoukankeisuu">???</span></span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <h4><span class="green_background">解説</span></h4>
+      <p></p>
+      <div>
+        \[
+        \begin{align}
+        (スピアマンの順位相関係数)=\rho_{xy}&=1-\frac{6\sum_{i=1}^{n}(x_i-y_i)^2}{n(n^2-1)}\\
+        \end{align}
+        \]
+        <p>$(スピアマンの順位相関係数)=$<span class="redunderline" id="supiaman_junisoukankeisuu_betunobasyo">ここに答え</span></p>
+      </div>     
+    </div>
+　</div>
+<script>
+//checkboxの数を二つまでに制限する。---------------------------------
+$("#checkbox_nikamoku_sentaku_juni input[type=checkbox]").click(function(){
+  var $count = $("#checkbox_nikamoku_sentaku_juni input[type=checkbox]:checked").length;
+  var $not = $('#checkbox_nikamoku_sentaku_juni input[type=checkbox]').not(':checked');
+  if($count >= 2)
+    {$not.attr("disabled",true);}
+  else
+    {$not.attr("disabled",false);};
+});
+</script>
+<script>
+//点数の表と順位の表を連動させる。-------------------------------------
+//順位のリストを作る。
+function tensuuhyou_junihyou_icchi(){
+　var tensuu_gyou=document.getElementById('table_gokamoku_tensuu').getElementsByTagName('tr');
+  var tensuu_sansuu_list=[];
+  var tensuu_kokugo_list=[];
+  var tensuu_rika_list=[];
+  var tensuu_syakai_list=[];
+  var tensuu_eigo_list=[];
+  var namae_list=[]
+  for(var i=1; i< tensuu_gyou.length; i++){
+    tensuu_sansuu_list.push(tensuu_gyou[i].querySelector('.tensuu_sansuu').value);
+    tensuu_kokugo_list.push(tensuu_gyou[i].querySelector('.tensuu_kokugo').value);
+    tensuu_rika_list.push(tensuu_gyou[i].querySelector('.tensuu_rika').value);
+    tensuu_syakai_list.push(tensuu_gyou[i].querySelector('.tensuu_syakai').value);
+    tensuu_eigo_list.push(tensuu_gyou[i].querySelector('.tensuu_eigo').value);
+    namae_list.push(tensuu_gyou[i].querySelector('.namae').value);
+  };
+  var ranks_sansuu_list=tensuu_sansuu_list.slice().map(function(x){return tensuu_sansuu_list.slice().sort(function(a, b){return b - a}).indexOf(x) + 1});
+  var ranks_kokugo_list=tensuu_kokugo_list.slice().map(function(x){return tensuu_kokugo_list.slice().sort(function(a, b){return b - a}).indexOf(x) + 1});
+  var ranks_rika_list=tensuu_rika_list.slice().map(function(x){return tensuu_rika_list.slice().sort(function(a, b){return b - a}).indexOf(x) + 1});
+  var ranks_syakai_list=tensuu_syakai_list.slice().map(function(x){return tensuu_syakai_list.slice().sort(function(a, b){return b - a}).indexOf(x) + 1});
+  var ranks_eigo_list=tensuu_eigo_list.slice().map(function(x){return tensuu_eigo_list.slice().sort(function(a, b){return b - a}).indexOf(x) + 1});
+//順位のリストに同率があった時に平均値にする。
+  var counts_sansuu = {};
+  for(var i=0 ; i<ranks_sansuu_list.length ; i++){
+    var key = ranks_sansuu_list[i];
+    counts_sansuu[key] = (counts_sansuu[key])? counts_sansuu[key] + 1 : 1 ;
+  };
+  for(var i=0 ; i<ranks_sansuu_list.length ; i++){
+    if(counts_sansuu[ranks_sansuu_list[i]]>1){
+      ranks_sansuu_list[i]=(ranks_sansuu_list[i]+(ranks_sansuu_list[i]+counts_sansuu[ranks_sansuu_list[i]]-1))/2
+    };
+  };
+  var counts_kokugo = {};
+  for(var i=0 ; i<ranks_kokugo_list.length ; i++){
+    var key = ranks_kokugo_list[i];
+    counts_kokugo[key] = (counts_kokugo[key])? counts_kokugo[key] + 1 : 1 ;
+  };
+  for(var i=0 ; i<ranks_kokugo_list.length ; i++){
+    if(counts_kokugo[ranks_kokugo_list[i]]>1){
+      ranks_kokugo_list[i]=(ranks_kokugo_list[i]+(ranks_kokugo_list[i]+counts_kokugo[ranks_kokugo_list[i]]-1))/2
+    };
+  };
+  var counts_rika = {};
+  for(var i=0 ; i<ranks_rika_list.length ; i++){
+    var key = ranks_rika_list[i];
+    counts_rika[key] = (counts_rika[key])? counts_rika[key] + 1 : 1 ;
+  };
+  for(var i=0 ; i<ranks_rika_list.length ; i++){
+    if(counts_rika[ranks_rika_list[i]]>1){
+      ranks_rika_list[i]=(ranks_rika_list[i]+(ranks_rika_list[i]+counts_rika[ranks_rika_list[i]]-1))/2
+    };
+  };
+  var counts_syakai = {};
+  for(var i=0 ; i<ranks_syakai_list.length ; i++){
+    var key = ranks_syakai_list[i];
+    counts_syakai[key] = (counts_syakai[key])? counts_syakai[key] + 1 : 1 ;
+  };
+  for(var i=0 ; i<ranks_syakai_list.length ; i++){
+    if(counts_syakai[ranks_syakai_list[i]]>1){
+      ranks_syakai_list[i]=(ranks_syakai_list[i]+(ranks_syakai_list[i]+counts_syakai[ranks_syakai_list[i]]-1))/2
+    };
+  };
+  var counts_eigo = {};
+  for(var i=0 ; i<ranks_eigo_list.length ; i++){
+    var key = ranks_eigo_list[i];
+    counts_eigo[key] = (counts_eigo[key])? counts_eigo[key] + 1 : 1 ;
+  };
+  for(var i=0 ; i<ranks_eigo_list.length ; i++){
+    if(counts_eigo[ranks_eigo_list[i]]>1){
+      ranks_eigo_list[i]=(ranks_eigo_list[i]+(ranks_eigo_list[i]+counts_eigo[ranks_eigo_list[i]]-1))/2
+    };
+  };
+//順位の表にさっき作った順位リストを代入する。
+  var juni_gyou=document.getElementById('table_gokamoku_juni').getElementsByTagName('tr');
+  for(var i=1; i<juni_gyou.length; i++){
+    juni_gyou[i].querySelector('.juni_sansuu').value=ranks_sansuu_list[i-1];
+    juni_gyou[i].querySelector('.juni_kokugo').value=ranks_kokugo_list[i-1];
+    juni_gyou[i].querySelector('.juni_rika').value=ranks_rika_list[i-1];
+    juni_gyou[i].querySelector('.juni_syakai').value=ranks_syakai_list[i-1];
+    juni_gyou[i].querySelector('.juni_eigo').value=ranks_eigo_list[i-1];
+    juni_gyou[i].querySelector('.namae').value=namae_list[i-1];
+  };
+};
+//点数の表と順位の表を連動させるfocusout
+document.getElementById('table_gokamoku_tensuu').addEventListener('focusout', (e) =>{
+  tensuuhyou_junihyou_icchi();
+});
+</script>
+<script>
+//スピアマンの順位相関係数を求める。-----------------------------------------
+function keisan_supiaman_junisoukankeisuu(){
+//チェックボックスから二科目をリストに取得。
+  var nikamoku_list_juni=[];
+  const checkbox_juni = document.getElementsByName("checkbox_juni");
+  for (let i = 0; i < checkbox_juni.length; i++){
+    if(checkbox_juni[i].checked){ 
+      nikamoku_list_juni.push(checkbox_juni[i].value);
+    };
+  };
+//本題。
+  var juni_gyou=document.getElementById('table_gokamoku_juni').getElementsByTagName('tr');
+  var supiaman_junisoukankeisuu_ichikarahiku=new BigNumber(0);
+  for(let i=1 ; i<juni_gyou.length ; i++){
+    if(nikamoku_list_juni[0]==='sansuu'){
+      var juni_ichikamokume=juni_gyou[i].querySelector('.juni_sansuu').value;
+    }
+      else if(nikamoku_list_juni[0]==='kokugo'){
+        var juni_ichikamokume=juni_gyou[i].querySelector('.juni_kokugo').value;
+      }
+        else if(nikamoku_list_juni[0]==='rika'){
+          var juni_ichikamokume=juni_gyou[i].querySelector('.juni_rika').value;
+        }
+          else if(nikamoku_list_juni[0]==='syakai'){
+            var juni_ichikamokume=juni_gyou[i].querySelector('.juni_syakai').value;
+          }
+            else if(nikamoku_list_juni[0]==='eigo'){
+              var juni_ichikamokume=juni_gyou[i].querySelector('.juni_eigo').value;
+            };
+    $("#supiaman_junisoukankeisuu").text(nikamoku_list_juni);
+    if(nikamoku_list_juni[1]==='sansuu'){
+      var juni_nikamokume=juni_gyou[i].querySelector('.juni_sansuu').value;
+    }
+      else if(nikamoku_list_juni[1]==='kokugo'){
+        var juni_nikamokume=juni_gyou[i].querySelector('.juni_kokugo').value;
+      }
+        else if(nikamoku_list_juni[1]==='rika'){
+          var juni_nikamokume=juni_gyou[i].querySelector('.juni_rika').value;
+        }
+          else if(nikamoku_list_juni[1]==='syakai'){
+            var juni_nikamokume=juni_gyou[i].querySelector('.juni_syakai').value;
+          }
+            else if(nikamoku_list_juni[1]==='eigo'){
+              var juni_nikamokume=juni_gyou[i].querySelector('.juni_eigo').value;
+            };    
+      supiaman_junisoukankeisuu_ichikarahiku=supiaman_junisoukankeisuu_ichikarahiku.plus(new BigNumber(6).times(new BigNumber(new BigNumber(juni_ichikamokume).minus(juni_nikamokume)).pow(2)).div(gyou_kosuu_juni).div(new BigNumber(gyou_kosuu_juni).pow(2).minus(1))); //supiaman_junisoukankeisuu_ichikarahiku+=6*Math.pow((juni_ichikamokume-juni_nikamokume),2)/(gyou_kosuu_juni)/(Math.pow(gyou_kosuu_juni,2)-1)
+  };
+  supiaman_junisoukankeisuu=new BigNumber(1).minus(supiaman_junisoukankeisuu_ichikarahiku);
+  supiaman_junisoukankeisuu_floor=(Math.round(supiaman_junisoukankeisuu*1000)/1000).toFixed(3);
+  $("#supiaman_junisoukankeisuu").text(supiaman_junisoukankeisuu_floor);
+  $("#supiaman_junisoukankeisuu_betunobasyo").text(supiaman_junisoukankeisuu);
+};
+</script>
+<!--三つ目の問題----------------------------------------------------------------------------->
+  <div id='mokujithree'>  
+    <li><span class="yellow_background">{{mokujithree}}</span></li>
+    <div><!--問題-->
+      <h4><span class="green_background">問題</span></h4>
+      <p>
+        ある一科目($x$とする)の影響を取り除いた時のある二科目($y$、$z$とする)の偏相関係数を求めよ。
+      </p>
+      <div id="checkbox_ichikamoku_sentaku_torinozokuhensuu">
+        <br/>
+        <p>###############################################################################################</p>
+        <p>影響を取り除きたい一科目($x$とする)にチェックをつけてください。</p>
+        <input type="checkbox" name="checkbox_ichikamoku_sentaku_torinozokuhensuu" value="sansuu">算数<br/>
+        <input type="checkbox" name="checkbox_ichikamoku_sentaku_torinozokuhensuu" value="kokugo">国語<br/>
+        <input type="checkbox" name="checkbox_ichikamoku_sentaku_torinozokuhensuu" value="rika">理科<br/>
+        <input type="checkbox" name="checkbox_ichikamoku_sentaku_torinozokuhensuu" value="syakai">社会<br/>
+        <input type="checkbox" name="checkbox_ichikamoku_sentaku_torinozokuhensuu" value="eigo">英語<br/>
+      </div>
+      </br>
+      <div id="checkbox_nikamoku_sentaku_for_hensoukan">
+        <p>真の相関を求めたい二科目($y$、$z$とする)にチェックをつけてください。</p>
+        <input type="checkbox" name="checkbox_nikamoku_sentaku_for_hensoukan" value="sansuu">算数<br/>
+        <input type="checkbox" name="checkbox_nikamoku_sentaku_for_hensoukan" value="kokugo">国語<br/>
+        <input type="checkbox" name="checkbox_nikamoku_sentaku_for_hensoukan" value="rika">理科<br/>
+        <input type="checkbox" name="checkbox_nikamoku_sentaku_for_hensoukan" value="syakai">社会<br/>
+        <input type="checkbox" name="checkbox_nikamoku_sentaku_for_hensoukan" value="eigo">英語<br/>
+        <p>###############################################################################################</p>
+      </div>
+      <p><input type="button" value="解答" onclick="keisan_hensoukankeisuu()"><span>←上でチェックをつけてから押してください。</span></p>
+    </div>
+    <div><!--解説-->
+      <h4><span class="green_background">解答</span></h4>
+      <h3><span class="redunderline">偏相関係数：<span id="hensoukankeisuu">???</span></span></h3>
+      <p>(小数点第四位四捨五入)</p>
+      <h4><span class="green_background">解説</span></h4>
+      <div>
+        \[
+        \begin{align}
+        (xの影響をを取り除いた時のyとzの偏相関係数)=r_{yz|x}=&\frac{S_{yz}S_{xx}-S_{yx}S_{zx}}{\sqrt{S_{yy}S_{xx}-S_{yx}^2}\sqrt{S_{zz}S_{xx}-S_{zx}^2}}\\
+                                                         =&\frac{r_{yz}-r_{yx}r_{zx}}{\sqrt{1-r_{yx}^2}\sqrt{1-r_{zx}^2}}
+        \end{align}
+        \]
+        <p>$(xの影響をを取り除いた時のyとzの偏相関係数)=$<span class="redunderline" id="hensoukankeisuu_betunobasyo">ここに答え</span></p>
+      </div> 
+      <div>
+        <h5><span  class="blue_background_usui">例を挙げて解説</span></h5>
+        <p>
+          下の表のような点数のデータがあるとする。理科の点数と社会の点数は正の相関を示しているが、この二科目は実質的に正の相関の関係性があるのだろうか。
+          ここで試しに、算数の影響を取り除くためにその二科目の偏相関係数を求めてみよう。すると、理科の点数と社会の点数は負の偏相関を示している。
+          このことから、理科の点数と社会の点数の正の相関は、算数の点数という第3の変数によって説明される可能性があるということが分かる。そうだとすると、理科と社会が正の相関を示しているのは見かけの相関であり、真の相関においては正の相関を示していないどころか負の相関を示している。
+          例えば、こんなことが推測できる。算数は全ての科目の基礎であり算数が得意であれば他の科目も得意になりやすい。理科と社会を見ると理科をたくさん勉強した人は理科が得意だが、その分社会を勉強できていないので社会が苦手である。逆もまた然り。
+        </p>
+        <table>
+          <tr><th>番号</th><th>算数</th><th>理科</th><th>社会</th></tr>
+          <tr><td>1</td><td>20</td><td>14</td><td>26</td></tr>
+          <tr><td>2</td><td>20</td><td>18</td><td>22</td></tr>
+          <tr><td>3</td><td>20</td><td>22</td><td>18</td></tr>
+          <tr><td>4</td><td>20</td><td>26</td><td>14</td></tr>
+          <tr><td>5</td><td>40</td><td>34</td><td>46</td></tr>
+          <tr><td>6</td><td>40</td><td>38</td><td>42</td></tr>
+          <tr><td>7</td><td>40</td><td>42</td><td>38</td></tr>
+          <tr><td>8</td><td>40</td><td>46</td><td>34</td></tr>
+          <tr><td>9</td><td>60</td><td>54</td><td>66</td></tr>
+          <tr><td>10</td><td>60</td><td>58</td><td>62</td></tr>
+          <tr><td>11</td><td>60</td><td>62</td><td>58</td></tr>
+          <tr><td>12</td><td>60</td><td>66</td><td>54</td></tr>
+          <tr><td>13</td><td>80</td><td>74</td><td>86</td></tr>
+          <tr><td>14</td><td>80</td><td>78</td><td>82</td></tr>
+          <tr><td>15</td><td>80</td><td>82</td><td>78</td></tr>
+          <tr><td>16</td><td>80</td><td>86</td><td>74</td></tr>
+        </table>
+        <p>$(理科と社会の相関係数)=0.9230769230769231$</p>
+        <p>$(算数と理科の相関係数)=0.9805806756909201$</p>
+        <p>$(算数と社会の相関係数)=0.9805806756909201$</p>
+        <p>$(算数の影響をを取り除いた時の理科と社会の偏相関係数)=-0.9999999999999943$</p>
+        <p></p>
+      </div>    
+    </div>
+  </div>
+<script>
+//checkboxに対してonchangeでchackbox_seigenが発生するように。
+document.getElementById("checkbox_ichikamoku_sentaku_torinozokuhensuu").addEventListener('change', chackbox_seigen);
+$('#checkbox_nikamoku_sentaku_for_hensoukan').on('change', 'input[type=checkbox]', chackbox_seigen);
+//checkboxの制限-------------------------------------------------------------------------------------------------
+function chackbox_seigen(){
+//checkbox_ichikamoku_sentaku_torinozokuhensuuの数を一つまでに制限する。
+  var $count = $("#checkbox_ichikamoku_sentaku_torinozokuhensuu input[type=checkbox]:checked").length;
+  var $not = $('#checkbox_ichikamoku_sentaku_torinozokuhensuu input[type=checkbox]').not(':checked');
+  if($count >= 1)
+    {$not.attr("disabled",true);}
+  else
+    {$not.attr("disabled",false);};
+//checkbox_nikamoku_sentaku_for_hensoukanの数を二つまでに制限する。
+  var $count = $("#checkbox_nikamoku_sentaku_for_hensoukan input[type=checkbox]:checked").length;
+  var $not = $('#checkbox_nikamoku_sentaku_for_hensoukan input[type=checkbox]').not(':checked');
+  if($count >= 2)
+    {$not.attr("disabled",true);}
+  else
+    {$not.attr("disabled",false);};
+//checkbox_nikamoku_sentaku_for_hensoukanがcheckbox_ichikamoku_sentaku_torinozokuhensuuと重複をできないようにする。
+  for(var i=0; i<document.getElementsByName("checkbox_ichikamoku_sentaku_torinozokuhensuu").length; i++){
+    if(document.getElementsByName("checkbox_ichikamoku_sentaku_torinozokuhensuu")[i].checked){
+      document.getElementsByName("checkbox_nikamoku_sentaku_for_hensoukan")[i].disabled = true; 
+    };
+  };
+//checkbox_ichikamoku_sentaku_torinozokuhensuuがcheckbox_nikamoku_sentaku_for_hensoukanと重複をできないようにする。
+  for(var i=0; i<document.getElementsByName("checkbox_nikamoku_sentaku_for_hensoukan").length; i++){
+    if(document.getElementsByName("checkbox_nikamoku_sentaku_for_hensoukan")[i].checked){
+      document.getElementsByName("checkbox_ichikamoku_sentaku_torinozokuhensuu")[i].disabled = true; 
+    };
+  };
+};
+</script>
+<script>
+//相関係数のすべての組み合わせを求める。------------------------------------------------
+function keisan_soukankeisuu_all(){
+  var tensuu_gyou=document.getElementById('table_gokamoku_tensuu').getElementsByTagName('tr');
+  var obj=keisan_heikin_bunsan_hyoujunhensa();
+  var heikin_sansuu=parseFloat(obj.heikin_sansuu);
+  var heikin_kokugo=parseFloat(obj.heikin_kokugo);
+  var heikin_rika=parseFloat(obj.heikin_rika);
+  var heikin_syakai=parseFloat(obj.heikin_syakai);
+  var heikin_eigo=parseFloat(obj.heikin_eigo);
+  var kyoubunsan_sansuu_kokugo=0;
+  var kyoubunsan_sansuu_rika=0;
+  var kyoubunsan_sansuu_syakai=0;
+  var kyoubunsan_sansuu_eigo=0;
+  var kyoubunsan_kokugo_rika=0;
+  var kyoubunsan_kokugo_syakai=0;
+  var kyoubunsan_kokugo_eigo=0;
+  var kyoubunsan_rika_syakai=0;
+  var kyoubunsan_rika_eigo=0;
+  var kyoubunsan_syakai_eigo=0;
+  var hyoujunhensa_sansuu=obj.hyoujunhensa_sansuu;
+  var hyoujunhensa_kokugo=obj.hyoujunhensa_kokugo;
+  var hyoujunhensa_rika=obj.hyoujunhensa_rika;
+  var hyoujunhensa_syakai=obj.hyoujunhensa_syakai;
+  var hyoujunhensa_eigo=obj.hyoujunhensa_eigo;
+  for(var i=1; i<tensuu_gyou.length; i++){
+    var tensuu_sansuu=tensuu_gyou[i].querySelector('.tensuu_sansuu').value;
+    var tensuu_kokugo=tensuu_gyou[i].querySelector('.tensuu_kokugo').value;
+    var tensuu_rika=tensuu_gyou[i].querySelector('.tensuu_rika').value;
+    var tensuu_syakai=tensuu_gyou[i].querySelector('.tensuu_syakai').value;
+    var tensuu_eigo=tensuu_gyou[i].querySelector('.tensuu_eigo').value;
+    kyoubunsan_sansuu_kokugo+=(tensuu_sansuu-heikin_sansuu)*(tensuu_kokugo-heikin_kokugo)/(parseFloat(tensuu_gyou.length)-1);
+    kyoubunsan_sansuu_rika+=(tensuu_sansuu-heikin_sansuu)*(tensuu_rika-heikin_rika)/(parseFloat(tensuu_gyou.length)-1);
+    kyoubunsan_sansuu_syakai+=(tensuu_sansuu-heikin_sansuu)*(tensuu_syakai-heikin_syakai)/(parseFloat(tensuu_gyou.length)-1);
+    kyoubunsan_sansuu_eigo+=(tensuu_sansuu-heikin_sansuu)*(tensuu_eigo-heikin_eigo)/(parseFloat(tensuu_gyou.length)-1);
+    kyoubunsan_kokugo_rika+=(tensuu_kokugo-heikin_kokugo)*(tensuu_rika-heikin_rika)/(parseFloat(tensuu_gyou.length)-1);
+    kyoubunsan_kokugo_syakai+=(tensuu_kokugo-heikin_kokugo)*(tensuu_syakai-heikin_syakai)/(parseFloat(tensuu_gyou.length)-1);
+    kyoubunsan_kokugo_eigo+=(tensuu_kokugo-heikin_kokugo)*(tensuu_eigo-heikin_eigo)/(parseFloat(tensuu_gyou.length)-1);
+    kyoubunsan_rika_syakai+=(tensuu_rika-heikin_rika)*(tensuu_syakai-heikin_syakai)/(parseFloat(tensuu_gyou.length)-1);
+    kyoubunsan_rika_eigo+=(tensuu_rika-heikin_rika)*(tensuu_eigo-heikin_eigo)/(parseFloat(tensuu_gyou.length)-1);
+    kyoubunsan_syakai_eigo+=(tensuu_syakai-heikin_syakai)*(tensuu_eigo-heikin_eigo)/(parseFloat(tensuu_gyou.length)-1);
+  };
+  soukankeisuu_sansuu_kokugo=kyoubunsan_sansuu_kokugo/hyoujunhensa_sansuu/hyoujunhensa_kokugo;
+  soukankeisuu_sansuu_rika=kyoubunsan_sansuu_rika/hyoujunhensa_sansuu/hyoujunhensa_rika;
+  soukankeisuu_sansuu_syakai=kyoubunsan_sansuu_syakai/hyoujunhensa_sansuu/hyoujunhensa_syakai;
+  soukankeisuu_sansuu_eigo=kyoubunsan_sansuu_eigo/hyoujunhensa_sansuu/hyoujunhensa_eigo;
+  soukankeisuu_kokugo_rika=kyoubunsan_kokugo_rika/hyoujunhensa_kokugo/hyoujunhensa_rika;
+  soukankeisuu_kokugo_syakai=kyoubunsan_kokugo_syakai/hyoujunhensa_kokugo/hyoujunhensa_syakai;
+  soukankeisuu_kokugo_eigo=kyoubunsan_kokugo_eigo/hyoujunhensa_kokugo/hyoujunhensa_eigo;
+  soukankeisuu_rika_syakai=kyoubunsan_rika_syakai/hyoujunhensa_rika/hyoujunhensa_syakai;
+  soukankeisuu_rika_eigo=kyoubunsan_rika_eigo/hyoujunhensa_rika/hyoujunhensa_eigo;
+  soukankeisuu_syakai_eigo=kyoubunsan_syakai_eigo/hyoujunhensa_syakai/hyoujunhensa_eigo;
+  return{
+    soukankeisuu_sansuu_kokugo:soukankeisuu_sansuu_kokugo,
+    soukankeisuu_sansuu_rika:soukankeisuu_sansuu_rika,
+    soukankeisuu_sansuu_syakai:soukankeisuu_sansuu_syakai,
+    soukankeisuu_sansuu_eigo:soukankeisuu_sansuu_eigo,
+    soukankeisuu_kokugo_rika:soukankeisuu_kokugo_rika,
+    soukankeisuu_kokugo_syakai:soukankeisuu_kokugo_syakai,
+    soukankeisuu_kokugo_eigo:soukankeisuu_kokugo_eigo,
+    soukankeisuu_rika_syakai:soukankeisuu_rika_syakai,
+    soukankeisuu_rika_eigo:soukankeisuu_rika_eigo,
+    soukankeisuu_syakai_eigo:soukankeisuu_syakai_eigo,
+  };
+};
+//偏相関係数を求める。--------------------------------------------------
+function keisan_hensoukankeisuu(){
+  var obj_keisan_soukankeisuu_all=keisan_soukankeisuu_all();
+//偏相関係数を求めるのに必要な数値を作っておく。
+  var soukankeisuu_x_y=0;
+  var soukankeisuu_x_z=0;
+  var soukankeisuu_y_z=0;
+//チェックボックスの情報をリストに変換。
+  var checkbox_ichikamoku_sentaku_torinozokuhensuu_list=[];
+  const checkbox_ichikamoku_sentaku_torinozokuhensuu = document.getElementsByName("checkbox_ichikamoku_sentaku_torinozokuhensuu");
+  for (let i = 0; i < checkbox_ichikamoku_sentaku_torinozokuhensuu.length; i++){
+    if(checkbox_ichikamoku_sentaku_torinozokuhensuu[i].checked){ 
+      checkbox_ichikamoku_sentaku_torinozokuhensuu_list.push(checkbox_ichikamoku_sentaku_torinozokuhensuu[i].value);
+    };
+  };
+  var checkbox_nikamoku_sentaku_for_hensoukan_list=[];
+  const checkbox_nikamoku_sentaku_for_hensoukan = document.getElementsByName("checkbox_nikamoku_sentaku_for_hensoukan");
+  for (let i = 0; i < checkbox_nikamoku_sentaku_for_hensoukan.length; i++){
+    if(checkbox_nikamoku_sentaku_for_hensoukan[i].checked){ 
+      checkbox_nikamoku_sentaku_for_hensoukan_list.push(checkbox_nikamoku_sentaku_for_hensoukan[i].value);
+    };
+  };
+  var checkbox_sankamoku_for_hensoukan_list=checkbox_ichikamoku_sentaku_torinozokuhensuu_list.concat(checkbox_nikamoku_sentaku_for_hensoukan_list);
+//偏相関係数のための相関係数を埋め込む。--------------------------
+//リストの最初(取り除く科目)に算数。
+  if(checkbox_sankamoku_for_hensoukan_list[0]==='sansuu'&&checkbox_sankamoku_for_hensoukan_list[1]==='kokugo'&&checkbox_sankamoku_for_hensoukan_list[2]==='rika'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_kokugo); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_rika); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_rika);
+      }
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='sansuu'&&checkbox_sankamoku_for_hensoukan_list[1]==='kokugo'&&checkbox_sankamoku_for_hensoukan_list[2]==='syakai'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_kokugo); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_syakai); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_syakai);
+      }
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='sansuu'&&checkbox_sankamoku_for_hensoukan_list[1]==='kokugo'&&checkbox_sankamoku_for_hensoukan_list[2]==='eigo'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_kokugo); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_eigo); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_eigo);
+      }
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='sansuu'&&checkbox_sankamoku_for_hensoukan_list[1]==='rika'&&checkbox_sankamoku_for_hensoukan_list[2]==='syakai'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_rika); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_syakai); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_rika_syakai);
+      }
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='sansuu'&&checkbox_sankamoku_for_hensoukan_list[1]==='rika'&&checkbox_sankamoku_for_hensoukan_list[2]==='eigo'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_rika); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_eigo); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_rika_eigo);
+      }
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='sansuu'&&checkbox_sankamoku_for_hensoukan_list[1]==='syakai'&&checkbox_sankamoku_for_hensoukan_list[2]==='eigo'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_syakai); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_eigo); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_syakai_eigo);
+      }
+//リストの最初(取り除く科目)に国語。
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='kokugo'&&checkbox_sankamoku_for_hensoukan_list[1]==='sansuu'&&checkbox_sankamoku_for_hensoukan_list[2]==='rika'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_kokugo); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_rika); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_rika);
+      }
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='kokugo'&&checkbox_sankamoku_for_hensoukan_list[1]==='sansuu'&&checkbox_sankamoku_for_hensoukan_list[2]==='syakai'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_kokugo); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_syakai); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_syakai);
+      }
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='kokugo'&&checkbox_sankamoku_for_hensoukan_list[1]==='sansuu'&&checkbox_sankamoku_for_hensoukan_list[2]==='eigo'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_kokugo); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_eigo); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_eigo);
+      }
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='kokugo'&&checkbox_sankamoku_for_hensoukan_list[1]==='rika'&&checkbox_sankamoku_for_hensoukan_list[2]==='syakai'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_rika); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_syakai); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_rika_syakai);
+      }
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='kokugo'&&checkbox_sankamoku_for_hensoukan_list[1]==='rika'&&checkbox_sankamoku_for_hensoukan_list[2]==='eigo'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_rika); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_eigo); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_rika_eigo);
+      }
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='kokugo'&&checkbox_sankamoku_for_hensoukan_list[1]==='syakai'&&checkbox_sankamoku_for_hensoukan_list[2]==='eigo'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_syakai); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_eigo); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_syakai_eigo);
+      }
+//リストの最初(取り除く科目)に理科。
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='rika'&&checkbox_sankamoku_for_hensoukan_list[1]==='sansuu'&&checkbox_sankamoku_for_hensoukan_list[2]==='kokugo'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_rika); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_rika); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_kokugo);
+      }
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='rika'&&checkbox_sankamoku_for_hensoukan_list[1]==='sansuu'&&checkbox_sankamoku_for_hensoukan_list[2]==='syakai'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_rika); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_rika_syakai); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_syakai);
+      }
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='rika'&&checkbox_sankamoku_for_hensoukan_list[1]==='sansuu'&&checkbox_sankamoku_for_hensoukan_list[2]==='eigo'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_rika); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_rika_eigo); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_eigo);
+      }
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='rika'&&checkbox_sankamoku_for_hensoukan_list[1]==='kokugo'&&checkbox_sankamoku_for_hensoukan_list[2]==='syakai'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_rika); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_rika_syakai); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_syakai);
+      } 
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='rika'&&checkbox_sankamoku_for_hensoukan_list[1]==='kokugo'&&checkbox_sankamoku_for_hensoukan_list[2]==='eigo'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_rika); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_rika_eigo); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_eigo);
+      }
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='rika'&&checkbox_sankamoku_for_hensoukan_list[1]==='syakai'&&checkbox_sankamoku_for_hensoukan_list[2]==='eigo'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_rika_syakai); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_rika_eigo); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_syakai_eigo);
+      }
+//リストの最初(取り除く科目)に社会。
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='syakai'&&checkbox_sankamoku_for_hensoukan_list[1]==='sansuu'&&checkbox_sankamoku_for_hensoukan_list[2]==='kokugo'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_syakai); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_syakai); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_kokugo);
+      }
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='syakai'&&checkbox_sankamoku_for_hensoukan_list[1]==='sansuu'&&checkbox_sankamoku_for_hensoukan_list[2]==='rika'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_syakai); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_rika_syakai); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_rika);
+      }
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='syakai'&&checkbox_sankamoku_for_hensoukan_list[1]==='sansuu'&&checkbox_sankamoku_for_hensoukan_list[2]==='eigo'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_syakai); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_syakai_eigo); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_eigo);
+      }
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='syakai'&&checkbox_sankamoku_for_hensoukan_list[1]==='kokugo'&&checkbox_sankamoku_for_hensoukan_list[2]==='rika'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_syakai); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_rika_syakai); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_rika);
+      }
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='syakai'&&checkbox_sankamoku_for_hensoukan_list[1]==='kokugo'&&checkbox_sankamoku_for_hensoukan_list[2]==='eigo'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_syakai); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_syakai_eigo); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_eigo);
+      }
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='syakai'&&checkbox_sankamoku_for_hensoukan_list[1]==='rika'&&checkbox_sankamoku_for_hensoukan_list[2]==='eigo'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_rika_syakai); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_syakai_eigo); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_rika_eigo);
+      }
+//リストの最初(取り除く科目)に英語。
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='eigo'&&checkbox_sankamoku_for_hensoukan_list[1]==='sansuu'&&checkbox_sankamoku_for_hensoukan_list[2]==='kokugo'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_eigo); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_eigo); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_kokugo);
+      }
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='eigo'&&checkbox_sankamoku_for_hensoukan_list[1]==='sansuu'&&checkbox_sankamoku_for_hensoukan_list[2]==='rika'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_eigo); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_rika_eigo); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_rika);
+      }
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='eigo'&&checkbox_sankamoku_for_hensoukan_list[1]==='sansuu'&&checkbox_sankamoku_for_hensoukan_list[2]==='syakai'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_eigo); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_syakai_eigo); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_sansuu_syakai);
+      }
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='eigo'&&checkbox_sankamoku_for_hensoukan_list[1]==='kokugo'&&checkbox_sankamoku_for_hensoukan_list[2]==='rika'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_eigo); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_rika_eigo); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_rika);
+      }
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='eigo'&&checkbox_sankamoku_for_hensoukan_list[1]==='kokugo'&&checkbox_sankamoku_for_hensoukan_list[2]==='syakai'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_eigo); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_syakai_eigo); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_kokugo_syakai);
+      }
+  else if(checkbox_sankamoku_for_hensoukan_list[0]==='eigo'&&checkbox_sankamoku_for_hensoukan_list[1]==='rika'&&checkbox_sankamoku_for_hensoukan_list[2]==='syakai'){
+      soukankeisuu_x_y=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_rika_eigo); soukankeisuu_x_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_syakai_eigo); soukankeisuu_y_z=parseFloat(obj_keisan_soukankeisuu_all.soukankeisuu_rika_syakai);
+      };
+//本題の計算
+  var hensoukankeisuu=(soukankeisuu_y_z-(soukankeisuu_x_y*soukankeisuu_x_z))/(Math.sqrt(1-(Math.pow(soukankeisuu_x_y,2))))/(Math.sqrt(1-(Math.pow(soukankeisuu_x_z,2))));
+  hensoukankeisuu_floor=(Math.round(hensoukankeisuu*1000)/1000).toFixed(3);
+  $("#hensoukankeisuu_betunobasyo").text(hensoukankeisuu);
+  $("#hensoukankeisuu").text(hensoukankeisuu_floor);
+};
+</script>
+<!--
+    <li>{{mokujifour}}</li>
+    <li>{{mokujifive}}</li>
+    <li>{{mokujisix}}</li>
+    <li>{{mokujiseven}}</li>
+    <li>{{mokujieight}}</li>
+    <li>{{mokujinine}}</li>
+    <li>{{mokujiten}}</li>
+    <li>{{mokujieleven}}</li>
+    <li>{{mokujitwelve}}</li>
+-->
+  </ol>
+{% endblock %}
